@@ -32,15 +32,17 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(fa
     if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return 'проекта';
     return 'проектов';
   };
-  const text = k.querySelector('.kicker__text');
+  const num = k.querySelector('.kicker__num');
+  const l1 = k.querySelector('.kicker__l1');
+  const l2 = k.querySelector('.kicker__l2');
   const next = k.querySelector('.kicker__next');
+  num.textContent = String(n);
   if (n > 0) {
-    text.textContent = '';
-    const b = document.createElement('b');
-    b.textContent = String(n);
-    text.append(n === 1 ? 'Свободен ' : 'Свободно ', b, ` ${word(n)} в ${IN[m]}`);
+    l1.textContent = `${word(n)} ${n % 10 === 1 && n % 100 !== 11 ? 'свободен' : 'свободно'}`;
+    l2.textContent = `в ${IN[m]}`;
   } else {
-    text.textContent = `В ${IN[m]} мест нет`;
+    l1.textContent = 'мест нет';
+    l2.textContent = `в ${IN[m]}`;
     k.classList.add('kicker--full');
   }
   next.textContent = `Можно забронировать на ${ON[(m + 1) % 12]} →`;
