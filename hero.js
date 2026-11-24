@@ -5,7 +5,7 @@
  */
 (() => {
   const WORDS = ['сайты', 'лендинги', 'магазины', 'бренды'];
-  const CYCLE_MS = 3800;
+  const CYCLE_MS = 7000;   // как долго держится каждое слово
 
   const hero = document.querySelector('.hero');
   const canvas = hero && hero.querySelector('.hero__canvas');
@@ -156,7 +156,7 @@
       ty[i] = t[k + 1];
       if (burst) {
         const a = Math.random() * Math.PI * 2;
-        const f = 4 + Math.random() * 10;
+        const f = 2 + Math.random() * 5;
         vx[i] += Math.cos(a) * f;
         vy[i] += Math.sin(a) * f;
       }
@@ -172,7 +172,7 @@
     clearInterval(cycleTimer);
     cycleTimer = setInterval(() => {
       if (!visible || document.hidden) return;
-      if (performance.now() - lastInteract < 1800) return;
+      if (performance.now() - lastInteract < 3000) return;
       nextWord();
     }, CYCLE_MS);
   }
@@ -190,8 +190,8 @@
       // Лёгкое «дыхание» вокруг цели
       const gx = tx[i] + Math.sin(t + seed[i]) * 0.7;
       const gy = ty[i] + Math.cos(t * 1.3 + seed[i]) * 0.7;
-      let ax = (gx - px[i]) * 0.045;
-      let ay = (gy - py[i]) * 0.045;
+      let ax = (gx - px[i]) * 0.018;
+      let ay = (gy - py[i]) * 0.018;
 
       if (pointer.active) {
         const dx = px[i] - mx;
@@ -205,8 +205,8 @@
           ay += (dy / d) * force;
         }
       }
-      vx[i] = (vx[i] + ax) * 0.86;
-      vy[i] = (vy[i] + ay) * 0.86;
+      vx[i] = (vx[i] + ax) * 0.9;
+      vy[i] = (vy[i] + ay) * 0.9;
       px[i] += vx[i];
       py[i] += vy[i];
     }
@@ -265,7 +265,7 @@
       vx[i] += (dx / d) * f;
       vy[i] += (dy / d) * f;
     }
-    setTimeout(nextWord, 220);
+    setTimeout(nextWord, 400);
     if (e.pointerType !== 'mouse') pointer.active = true;
   });
 
