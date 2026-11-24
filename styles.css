@@ -386,6 +386,7 @@ a { color: inherit; }
 .stat__num { margin: 0 0 .3rem; font-family: var(--display); font-size: clamp(3.4rem, 8vw, 7rem); font-weight: 800; letter-spacing: -0.06em; line-height: 1; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .stat__label { margin: 0; color: var(--muted); }
 .team { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px; }
+.team--solo { grid-template-columns: 1fr; max-width: 720px; }
 .person { display: flex; align-items: center; gap: 22px; padding: 28px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--card); }
 .person h3 { font-family: var(--display); font-size: 1.3rem; margin-bottom: .25em; }
 .person p { margin: 0; }

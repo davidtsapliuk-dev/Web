@@ -296,7 +296,7 @@ const form = document.getElementById('contact-form');
 const statusEl = form.querySelector('.form__status');
 const formOpenedAt = Date.now();
 const MIN_FILL_TIME_MS = 3000; // человек не заполнит форму быстрее 3 секунд
-const SUCCESS = 'Спасибо! Мы свяжемся с вами в течение рабочего дня.';
+const SUCCESS = 'Спасибо! Я свяжусь с вами в течение рабочего дня.';
 
 async function sendForm(data) {
   // Пример для Formspree:
@@ -343,9 +343,9 @@ form.addEventListener('submit', async (e) => {
     if (!res.ok) throw new Error();
     form.reset();
     statusEl.textContent = SUCCESS;
-    notify('Заявка отправлена — скоро ответим');
+    notify('Заявка отправлена — скоро отвечу');
   } catch {
-    statusEl.textContent = 'Не получилось отправить. Напишите нам в Telegram.';
+    statusEl.textContent = 'Не получилось отправить. Напишите мне в Telegram.';
   } finally {
     button.disabled = false;
   }
