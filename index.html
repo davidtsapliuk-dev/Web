@@ -136,7 +136,7 @@
         <div class="section__head">
           <p class="label reveal">03 — Цены</p>
           <h2 class="h2 reveal">Честные цены.<br><span class="grad">Без сюрпризов.</span></h2>
-          <p class="muted section__lead reveal">Фиксированная стоимость после брифа — в процессе она не растёт. Оплата частями: 50% на старте, 50% после сдачи. Все цены указаны без НДС (zzgl. MwSt.).</p>
+          <p class="muted section__lead reveal">Фиксированная стоимость после брифа — в процессе она не растёт. Оплата частями: 50% на старте, 50% после сдачи. Цены окончательные: НДС не взимается (Kleinunternehmer, §&nbsp;19&nbsp;UStG).</p>
         </div>
 
         <div class="plans">
@@ -144,14 +144,15 @@
             <div class="plan__glare" aria-hidden="true"></div>
             <p class="label">Landing</p>
             <h3 class="plan__name">Лендинг</h3>
-            <p class="plan__price"><small>от</small> 1 900 €</p>
+            <p class="plan__price"><small>от</small> 199 €</p>
+            <p class="plan__monthly">+ 29 € / мес</p>
             <p class="plan__time">7–14 дней</p>
             <ul class="plan__list">
               <li>До 8 смысловых блоков</li>
               <li>Индивидуальный дизайн</li>
               <li>Адаптив под все экраны</li>
               <li>Форма заявки в Telegram или на почту</li>
-              <li>1 месяц поддержки</li>
+              <li>Хостинг, обновления и поддержка</li>
             </ul>
             <a href="#contact" class="btn btn--ghost btn--block" data-plan="Лендинг">Выбрать</a>
           </article>
@@ -160,7 +161,8 @@
             <div class="plan__glare" aria-hidden="true"></div>
             <p class="label">Business <span class="badge">Хит</span></p>
             <h3 class="plan__name">Сайт компании</h3>
-            <p class="plan__price"><small>от</small> 4 900 €</p>
+            <p class="plan__price"><small>от</small> 1 299 €</p>
+            <p class="plan__monthly">+ 29 € / мес</p>
             <p class="plan__time">3–5 недель</p>
             <ul class="plan__list">
               <li>До 10 уникальных страниц</li>
@@ -168,7 +170,7 @@
               <li>Удобная админка</li>
               <li>Блог или новости</li>
               <li>SEO-основа и DSGVO</li>
-              <li>3 месяца поддержки</li>
+              <li>Хостинг, обновления и поддержка</li>
             </ul>
             <a href="#contact" class="btn btn--block" data-plan="Сайт компании">Выбрать</a>
           </article>
@@ -177,14 +179,15 @@
             <div class="plan__glare" aria-hidden="true"></div>
             <p class="label">Commerce</p>
             <h3 class="plan__name">Магазин</h3>
-            <p class="plan__price"><small>от</small> 8 900 €</p>
+            <p class="plan__price"><small>от</small> 2 499 €</p>
+            <p class="plan__monthly">+ 29 € / мес</p>
             <p class="plan__time">6–10 недель</p>
             <ul class="plan__list">
               <li>Каталог с фильтрами и поиском</li>
               <li>Корзина и онлайн-оплата</li>
               <li>Доставка и личный кабинет</li>
               <li>Импорт товаров из таблиц</li>
-              <li>3 месяца поддержки</li>
+              <li>Хостинг, обновления и поддержка</li>
             </ul>
             <a href="#contact" class="btn btn--ghost btn--block" data-plan="Интернет-магазин">Выбрать</a>
           </article>
@@ -194,21 +197,20 @@
           <div class="calc__col">
             <p class="label">Калькулятор</p>
             <div class="seg" role="radiogroup" aria-label="Основа">
-              <label><input type="radio" name="base" value="1900" data-name="Лендинг" checked><span>Лендинг</span></label>
-              <label><input type="radio" name="base" value="4900" data-name="Сайт компании"><span>Сайт</span></label>
-              <label><input type="radio" name="base" value="8900" data-name="Интернет-магазин"><span>Магазин</span></label>
+              <label><input type="radio" name="base" value="199" data-monthly="29" data-name="Лендинг" checked><span>Лендинг</span></label>
+              <label><input type="radio" name="base" value="1299" data-monthly="29" data-name="Сайт компании"><span>Сайт</span></label>
+              <label><input type="radio" name="base" value="2499" data-monthly="29" data-name="Интернет-магазин"><span>Магазин</span></label>
             </div>
             <div class="chips" aria-label="Дополнения">
-              <label><input type="checkbox" value="900" data-name="логотип"><span>Логотип и фирстиль · +900 €</span></label>
-              <label><input type="checkbox" value="600" data-name="второй язык"><span>Второй язык · +600 €</span></label>
-              <label><input type="checkbox" value="500" data-name="тексты"><span>Тексты под ключ · +500 €</span></label>
-              <label><input type="checkbox" value="149" data-name="поддержка" data-monthly><span>Поддержка · +149 €/мес</span></label>
+              <label><input type="checkbox" value="190" data-name="логотип"><span>Логотип и фирстиль · +190 €</span></label>
+              <label><input type="checkbox" value="149" data-name="второй язык"><span>Второй язык · +149 €</span></label>
+              <label><input type="checkbox" value="99" data-name="тексты"><span>Тексты под ключ · +99 €</span></label>
             </div>
           </div>
           <div class="calc__total" aria-live="polite">
             <span class="label">Итого</span>
-            <output class="calc__sum" id="calc-sum" for="calc">от 1 900 €</output>
-            <span class="calc__monthly" id="calc-monthly"></span>
+            <output class="calc__sum" id="calc-sum" for="calc">от 199 €</output>
+            <span class="calc__monthly" id="calc-monthly">+ 29 € в месяц: хостинг и поддержка</span>
             <a href="#contact" class="btn magnetic" id="calc-cta">Обсудить этот проект</a>
           </div>
         </form>

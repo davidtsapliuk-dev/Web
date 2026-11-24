@@ -252,19 +252,18 @@ const fmt = (n) => n.toLocaleString('ru-RU').replace(/\s/g, ' ');
 function calcState() {
   const base = calc.querySelector('input[name="base"]:checked');
   let once = parseInt(base.value, 10);
-  let monthly = 0;
+  const monthly = parseInt(base.dataset.monthly || '0', 10); // хостинг и поддержка
   const extras = [];
   calc.querySelectorAll('input[type="checkbox"]:checked').forEach((c) => {
-    if (c.hasAttribute('data-monthly')) monthly += parseInt(c.value, 10);
-    else once += parseInt(c.value, 10);
+    once += parseInt(c.value, 10);
     extras.push(c.dataset.name);
   });
   return { name: base.dataset.name, once, monthly, extras };
 }
-let shown = 1900;
+let shown = 199;
 calc.addEventListener('change', () => {
   const { once, monthly } = calcState();
-  monthlyEl.textContent = monthly ? `+ ${fmt(monthly)} € в месяц` : '';
+  monthlyEl.textContent = monthly ? `+ ${fmt(monthly)} € в месяц: хостинг и поддержка` : '';
   if (reduceMotion) { sumEl.textContent = `от ${fmt(once)} €`; shown = once; return; }
   const from = shown;
   const start = performance.now();
