@@ -451,18 +451,19 @@ a { color: inherit; }
 
 /* ---------- Уведомление ---------- */
 .toast {
-  position: fixed; left: 50%; bottom: 28px; z-index: 90;
+  position: fixed; left: 16px; right: 16px; bottom: 28px; z-index: 90;
   display: flex; align-items: center; gap: 14px;
-  max-width: calc(100vw - 32px);
+  width: max-content; max-width: min(520px, calc(100vw - 32px)); margin: 0 auto;
+  pointer-events: none;
   padding: 14px 22px 14px 16px;
   border-radius: 999px;
   background: rgba(244, 240, 232, .96); color: var(--bg);
   box-shadow: 0 20px 60px -20px rgba(0,0,0,.6);
   font-size: .92rem; font-weight: 600;
-  transform: translate(-50%, 140%); opacity: 0;
+  transform: translateY(140%); opacity: 0;
   transition: transform .6s var(--ease-back), opacity .3s;
 }
-.toast.is-shown { transform: translate(-50%, 0); opacity: 1; }
+.toast.is-shown { transform: none; opacity: 1; }
 .toast__dot { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--grad); }
 
 /* ---------- Курсор ---------- */
