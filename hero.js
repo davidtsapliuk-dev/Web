@@ -2,7 +2,7 @@
  * Hero: глитч-слово в стиле киберпанка.
  * Слово рисуется на canvas: цветное расслоение (бирюзовый/розовый), рваные горизонтальные
  * полосы, развёртка. Сбои случаются сами по себе и усиливаются под курсором.
- * При «Уменьшении движения» — без мерцания: слово просто стоит.
+ * При «Уменьшении движения» — мягче: сбои реже и слабее, без цветных вспышек.
  */
 (() => {
   const WORDS = ['Сайты'];
@@ -118,8 +118,8 @@
 
   /* ---------- Новый рисунок сбоя ---------- */
   function tick() {
-    const lvl = reduceMotion ? 0 : energy;
-    split = reduceMotion ? 2 : 2 + lvl * rand(6, 16);
+    const lvl = reduceMotion ? Math.min(energy, 0.5) : energy;
+    split = 2 + lvl * rand(6, 16);
     jitterY = lvl > 0.3 ? rand(-1, 1) * lvl * 4 : 0;
 
     slices = [];
@@ -131,7 +131,7 @@
       }
     }
     blocks = [];
-    if (lvl > 0.5) {
+    if (lvl > 0.5 && !reduceMotion) {
       const n = Math.floor(lvl * 6);
       for (let i = 0; i < n; i++) {
         blocks.push({
@@ -169,12 +169,12 @@
     if (!running) return;
 
     // Сбои сами по себе, иногда
-    if (!reduceMotion && now > nextSpike) {
-      energy = Math.max(energy, rand(0.35, 0.9));
-      nextSpike = now + rand(1400, 4200);
+    if (now > nextSpike) {
+      energy = Math.max(energy, reduceMotion ? rand(0.25, 0.5) : rand(0.35, 0.9));
+      nextSpike = now + (reduceMotion ? rand(3000, 6000) : rand(1400, 4200));
     }
     // Курсор над словом: чем быстрее движется, тем сильнее сбой
-    if (!reduceMotion && pointer.over) {
+    if (pointer.over) {
       energy = Math.max(energy, Math.min(1, 0.22 + pointer.speed / 50));
       pointer.speed *= 0.85;
     }
