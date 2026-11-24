@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Нить — инди веб-студия</title>
+  <meta name="description" content="Небольшая независимая веб-студия: сайты, лендинги и интернет-магазины под ключ. Прозрачные цены, сроки и общение напрямую с разработчиком.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23ff5a36'/><path d='M8 22V10l16 12V10' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a href="#top" class="logo" aria-label="Нить — на главную">
+        <span class="logo__mark" aria-hidden="true">N</span>
+        <span>Нить</span>
+      </a>
+      <button class="nav-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav" id="nav">
+        <a href="#services">Услуги</a>
+        <a href="#pricing">Цены</a>
+        <a href="#process">Как работаем</a>
+        <a href="#about">О студии</a>
+        <a href="#faq">Вопросы</a>
+        <a href="#contact" class="btn btn--small">Обсудить проект</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <p class="eyebrow">Независимая веб-студия</p>
+        <h1>Делаем сайты, которые <span class="accent">работают</span>, а не просто красиво выглядят</h1>
+        <p class="hero__lead">
+          Нас двое: дизайнер и разработчик. Без менеджеров-посредников, без раздутых смет.
+          Вы общаетесь напрямую с теми, кто делает ваш проект.
+        </p>
+        <div class="hero__actions">
+          <a href="#pricing" class="btn">Посмотреть цены</a>
+          <a href="#contact" class="btn btn--ghost">Написать нам</a>
+        </div>
+        <ul class="stats">
+          <li><strong>40+</strong><span>запущенных проектов</span></li>
+          <li><strong>от 7 дней</strong><span>до готового лендинга</span></li>
+          <li><strong>95+</strong><span>баллов в PageSpeed</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="section" id="services">
+      <div class="container">
+        <p class="eyebrow">Услуги</p>
+        <h2>Что мы делаем</h2>
+        <div class="grid grid--3">
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">◐</div>
+            <h3>Дизайн</h3>
+            <p>Уникальный дизайн без шаблонов: от структуры и прототипа до финальных макетов в Figma для всех экранов.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">⌘</div>
+            <h3>Разработка</h3>
+            <p>Быстрая адаптивная вёрстка, анимации, формы, интеграции с CRM, оплатой и мессенджерами.</p>
+          </article>
+          <article class="card">
+            <div class="card__icon" aria-hidden="true">↗</div>
+            <h3>Запуск и рост</h3>
+            <p>Домен, хостинг, базовое SEO, аналитика. После запуска остаёмся на связи и помогаем развивать сайт.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="section section--alt" id="pricing">
+      <div class="container">
+        <p class="eyebrow">Цены</p>
+        <h2>Прозрачные тарифы</h2>
+        <p class="section__lead">Фиксированная стоимость после брифа: цена не вырастет в процессе работы. Оплата частями: 50% на старте и 50% после сдачи.</p>
+
+        <div class="grid grid--3 pricing">
+          <article class="plan">
+            <h3 class="plan__name">Лендинг</h3>
+            <p class="plan__desc">Одностраничный сайт для продукта, услуги или мероприятия</p>
+            <p class="plan__price"><span>от</span> 45 000 ₽</p>
+            <p class="plan__time">Срок: 7–14 дней</p>
+            <ul class="plan__list">
+              <li>До 8 смысловых блоков</li>
+              <li>Индивидуальный дизайн</li>
+              <li>Адаптив под телефоны и планшеты</li>
+              <li>Форма заявки в Telegram или на почту</li>
+              <li>Подключение аналитики</li>
+              <li>1 месяц бесплатной поддержки</li>
+            </ul>
+            <a href="#contact" class="btn btn--ghost btn--block" data-plan="Лендинг">Выбрать</a>
+          </article>
+
+          <article class="plan plan--featured">
+            <p class="plan__badge">Чаще всего выбирают</p>
+            <h3 class="plan__name">Сайт компании</h3>
+            <p class="plan__desc">Многостраничный сайт с удобной админкой для самостоятельного редактирования</p>
+            <p class="plan__price"><span>от</span> 120 000 ₽</p>
+            <p class="plan__time">Срок: 3–5 недель</p>
+            <ul class="plan__list">
+              <li>До 10 уникальных страниц</li>
+              <li>Дизайн-концепция и UI-kit</li>
+              <li>Панель управления контентом</li>
+              <li>Блог или раздел новостей</li>
+              <li>Базовая SEO-оптимизация</li>
+              <li>3 месяца бесплатной поддержки</li>
+            </ul>
+            <a href="#contact" class="btn btn--block" data-plan="Сайт компании">Выбрать</a>
+          </article>
+
+          <article class="plan">
+            <h3 class="plan__name">Интернет-магазин</h3>
+            <p class="plan__desc">Каталог, корзина и онлайн-оплата для небольшого и среднего бизнеса</p>
+            <p class="plan__price"><span>от</span> 220 000 ₽</p>
+            <p class="plan__time">Срок: 6–10 недель</p>
+            <ul class="plan__list">
+              <li>Каталог с фильтрами и поиском</li>
+              <li>Корзина и оформление заказа</li>
+              <li>Онлайн-оплата и доставка</li>
+              <li>Личный кабинет покупателя</li>
+              <li>Импорт товаров из таблиц / 1С</li>
+              <li>3 месяца бесплатной поддержки</li>
+            </ul>
+            <a href="#contact" class="btn btn--ghost btn--block" data-plan="Интернет-магазин">Выбрать</a>
+          </article>
+        </div>
+
+        <h3 class="extras__title">Дополнительные услуги</h3>
+        <div class="table-wrap">
+          <table class="extras">
+            <tbody>
+              <tr><td>Дополнительная страница</td><td>от 8 000 ₽</td></tr>
+              <tr><td>Логотип и мини-фирстиль</td><td>от 25 000 ₽</td></tr>
+              <tr><td>Тексты для сайта (копирайтинг)</td><td>от 1 500 ₽ / блок</td></tr>
+              <tr><td>Мультиязычность</td><td>от 15 000 ₽</td></tr>
+              <tr><td>Редизайн существующего сайта</td><td>от 60 000 ₽</td></tr>
+              <tr><td>Техподдержка после гарантийного срока</td><td>от 6 000 ₽ / мес</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="section" id="process">
+      <div class="container">
+        <p class="eyebrow">Процесс</p>
+        <h2>Как мы работаем</h2>
+        <ol class="steps">
+          <li>
+            <h3>Знакомство</h3>
+            <p>Созваниваемся на 30 минут, разбираемся в задаче, заполняем короткий бриф.</p>
+          </li>
+          <li>
+            <h3>Смета и договор</h3>
+            <p>Присылаем фиксированную цену, сроки и план работ. Подписываем договор.</p>
+          </li>
+          <li>
+            <h3>Дизайн</h3>
+            <p>Показываем прототип, потом макеты. Включены 2 раунда правок.</p>
+          </li>
+          <li>
+            <h3>Разработка</h3>
+            <p>Верстаем и программируем. Вы видите промежуточный результат на тестовом адресе.</p>
+          </li>
+          <li>
+            <h3>Запуск</h3>
+            <p>Переносим сайт на ваш домен, проверяем всё и передаём доступы и инструкции.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section section--alt" id="about">
+      <div class="container about">
+        <div>
+          <p class="eyebrow">О студии</p>
+          <h2>Маленькая команда — большая ответственность</h2>
+          <p>Мы — независимая студия из двух человек. Работаем с малым бизнесом, стартапами, экспертами и творческими проектами.</p>
+          <p>Берём не больше трёх проектов одновременно, поэтому каждому уделяем полноценное внимание. Отвечаем в рабочее время в течение пары часов.</p>
+        </div>
+        <div class="team">
+          <article class="person">
+            <div class="person__avatar" aria-hidden="true">А</div>
+            <div>
+              <h3>Анна</h3>
+              <p>Дизайнер, арт-директор. 8 лет в UI/UX.</p>
+            </div>
+          </article>
+          <article class="person">
+            <div class="person__avatar person__avatar--alt" aria-hidden="true">Д</div>
+            <div>
+              <h3>Давид</h3>
+              <p>Разработчик. Frontend, backend и всё, что между ними.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="container container--narrow">
+        <p class="eyebrow">Вопросы</p>
+        <h2>Частые вопросы</h2>
+        <div class="faq">
+          <details>
+            <summary>Почему цена «от»?</summary>
+            <p>Итоговая стоимость зависит от объёма и сложности. После брифа мы называем точную цену, и она не меняется, если не меняется задача.</p>
+          </details>
+          <details>
+            <summary>Смогу ли я сам менять контент на сайте?</summary>
+            <p>Да. В тарифах «Сайт компании» и «Интернет-магазин» есть удобная панель управления. Мы покажем, как ей пользоваться, и оставим инструкцию.</p>
+          </details>
+          <details>
+            <summary>Работаете ли вы по договору?</summary>
+            <p>Да, работаем официально: по договору с самозанятым или ИП, с закрывающими документами.</p>
+          </details>
+          <details>
+            <summary>Что если результат не понравится?</summary>
+            <p>Мы согласовываем каждый этап, поэтому сюрпризов в конце не бывает. Если на этапе дизайна мы не попали в ожидания, сделаем новую концепцию.</p>
+          </details>
+          <details>
+            <summary>Кому принадлежит сайт?</summary>
+            <p>Вам. Домен, хостинг и исходный код оформляются на вас, все доступы передаём после запуска.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section section--dark" id="contact">
+      <div class="container contact">
+        <div>
+          <p class="eyebrow">Контакты</p>
+          <h2>Расскажите о проекте</h2>
+          <p>Оставьте заявку, и мы ответим в течение рабочего дня. Первая консультация бесплатная.</p>
+          <ul class="contact__links">
+            <li><a href="https://t.me/your_username" target="_blank" rel="noopener">Telegram: @your_username</a></li>
+            <li><a href="mailto:hello@example.com">hello@example.com</a></li>
+          </ul>
+        </div>
+        <form class="form" id="contact-form" novalidate>
+          <label>
+            Имя
+            <input type="text" name="name" required autocomplete="name">
+          </label>
+          <label>
+            Telegram или e-mail
+            <input type="text" name="contact" required>
+          </label>
+          <label>
+            Тариф
+            <select name="plan" id="plan-select">
+              <option>Пока не знаю</option>
+              <option>Лендинг</option>
+              <option>Сайт компании</option>
+              <option>Интернет-магазин</option>
+              <option>Другое</option>
+            </select>
+          </label>
+          <label>
+            О проекте
+            <textarea name="message" rows="4" placeholder="Коротко: что за проект и какие сроки"></textarea>
+          </label>
+          <button type="submit" class="btn btn--block">Отправить заявку</button>
+          <p class="form__status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span>© <span id="year"></span> Студия «Нить»</span>
+      <a href="#top">Наверх ↑</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
