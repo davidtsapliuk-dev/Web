@@ -365,6 +365,10 @@ a { color: inherit; }
 /* ---------- Процесс: горизонтальная прокрутка ---------- */
 .hscroll { position: relative; padding: 0; }
 .hscroll__track { display: grid; gap: 18px; padding: 0 32px; max-width: 1280px; margin: 0 auto; }
+@media (min-width: 1001px) {
+  .hscroll:not(.hscroll--on) .hscroll__track { grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .hscroll:not(.hscroll--on) .hscroll__intro { grid-column: auto; align-self: center; padding-right: 24px; }
+}
 .hscroll__intro { padding: 10px 0 24px; }
 .hscroll__intro .muted { max-width: 380px; margin-top: 1.4rem; }
 /* Фон раздела: глубокий градиент, медленное «северное сияние» и сетка точек */
@@ -389,40 +393,46 @@ a { color: inherit; }
   border-radius: 26px;
   border: 1px solid transparent;
   background:
-    linear-gradient(160deg, rgba(20, 26, 44, .92), rgba(11, 13, 20, .92)) padding-box,
+    linear-gradient(160deg, rgb(19, 24, 40), rgb(11, 13, 20)) padding-box,
     linear-gradient(140deg, rgba(95, 212, 255, .35), rgba(255, 255, 255, .06) 40%, rgba(31, 79, 224, .35)) border-box;
   box-shadow: 0 30px 70px -40px rgba(0, 0, 0, .9);
-  transition: transform .7s var(--ease), box-shadow .7s var(--ease), background .7s;
+  transform: translateZ(0);            /* своя «плёнка»: подсветка не перерисовывает соседей */
+  transition: transform .6s var(--ease);
+  contain: paint;
 }
-/* Свет, который идёт за курсором */
-.step::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .5s;
-  background: radial-gradient(380px circle at var(--mx) var(--my), rgba(30, 155, 255, .18), transparent 60%); }
-.step:hover::before, .step.is-active::before { opacity: 1; }
-.step.is-active {
-  transform: translateY(-10px);
-  background:
-    linear-gradient(160deg, rgba(22, 34, 64, .95), rgba(12, 15, 26, .95)) padding-box,
-    linear-gradient(140deg, #5fd4ff, rgba(255, 255, 255, .1) 45%, #1f4fe0) border-box;
-  box-shadow: 0 40px 90px -40px rgba(30, 155, 255, .55), 0 0 0 1px rgba(95, 212, 255, .08);
-}
+/* Подсветка активного шага и свет за курсором — отдельные слои, меняется только прозрачность */
+.step::before, .step::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; opacity: 0; transition: opacity .5s var(--ease); pointer-events: none; }
+.step::before { background: radial-gradient(380px circle at var(--mx) var(--my), rgba(30, 155, 255, .16), transparent 60%); }
+.step::after { inset: -1px; border: 1px solid rgba(95, 212, 255, .55); background: linear-gradient(160deg, rgba(30, 90, 200, .22), transparent 60%); }
+.step:hover::before, .step.is-active::before, .step.is-active::after { opacity: 1; }
+.step.is-active { transform: translate3d(0, -10px, 0); }
 .step__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 26px; }
-.step__icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px;
-  background: linear-gradient(145deg, rgba(95, 212, 255, .18), rgba(31, 79, 224, .12)); border: 1px solid rgba(95, 212, 255, .25);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.12); transition: background .6s, box-shadow .6s; }
-.step__icon svg { width: 24px; height: 24px; fill: none; stroke: var(--g3); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.step.is-active .step__icon { background: var(--grad); box-shadow: 0 10px 30px -8px rgba(30, 155, 255, .8); }
+.step__icon { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px;
+  background: linear-gradient(145deg, rgba(95, 212, 255, .18), rgba(31, 79, 224, .12)); border: 1px solid rgba(95, 212, 255, .25); }
+.step__icon::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; background: var(--grad); opacity: 0; transition: opacity .5s; }
+.step__icon svg { position: relative; width: 24px; height: 24px; fill: none; stroke: var(--g3); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .4s; }
+.step.is-active .step__icon::before { opacity: 1; }
 .step.is-active .step__icon svg { stroke: var(--on-grad); }
-.step__tag { padding: .45em .9em; border-radius: 99px; border: 1px solid var(--line-2); background: rgba(255,255,255,.04); font-size: .74rem; font-weight: 600; letter-spacing: .04em; color: var(--muted); white-space: nowrap; }
+.step__tag { padding: .45em .9em; border-radius: 99px; border: 1px solid var(--line-2); background: rgba(255,255,255,.04); font-size: .74rem; font-weight: 600; letter-spacing: .04em; color: var(--muted); white-space: nowrap; transition: color .4s, border-color .4s; }
 .step.is-active .step__tag { color: var(--text); border-color: rgba(95, 212, 255, .4); }
-.step__num { display: block; margin-bottom: 40px; font-family: var(--display); font-size: clamp(4rem, 8vw, 7.2rem); font-weight: 800; line-height: .85; letter-spacing: -0.07em;
-  color: transparent; -webkit-text-stroke: 1.5px rgba(95, 212, 255, .35);
-  background: var(--grad); -webkit-background-clip: text; background-clip: text; background-size: 100% 0%; background-repeat: no-repeat; background-position: 0 100%;
-  transition: background-size .9s var(--ease), -webkit-text-stroke-color .6s; }
-.step.is-active .step__num, .step:hover .step__num { background-size: 100% 100%; -webkit-text-stroke-color: transparent; }
+/* Номер: контур, поверх него заливка градиентом, которая проявляется прозрачностью */
+.step__num { position: relative; display: block; margin-bottom: 40px; font-family: var(--display); font-size: clamp(4rem, 8vw, 7.2rem); font-weight: 800; line-height: .85; letter-spacing: -0.07em;
+  color: transparent; -webkit-text-stroke: 1.5px rgba(95, 212, 255, .35); }
+.step__num::after { content: attr(data-n); position: absolute; left: 0; top: 0; -webkit-text-stroke: 0;
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+  opacity: 0; transition: opacity .6s var(--ease); }
+.step.is-active .step__num::after, .step:hover .step__num::after { opacity: 1; }
 .step h3 { font-family: var(--display); font-size: 1.55rem; letter-spacing: -0.02em; margin-bottom: .55em; }
 .step p { margin: 0; color: var(--muted); line-height: 1.6; }
-.step__node { position: absolute; left: 32px; bottom: 0; width: 46px; height: 3px; border-radius: 3px 3px 0 0; background: var(--line-2); transition: width .8s var(--ease), background .6s; }
-.step.is-active .step__node { width: calc(100% - 64px); background: var(--grad); }
+.step__node { position: absolute; left: 32px; right: 32px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--line-2); transform-origin: left; transform: scaleX(.14); transition: transform .8s var(--ease); }
+.step__node::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--grad); opacity: 0; transition: opacity .5s; }
+.step.is-active .step__node { transform: none; }
+.step.is-active .step__node::after { opacity: 1; }
+/* На сенсорных экранах — фон спокойнее: без движения и без сетки точек */
+@media (hover: none), (pointer: coarse) {
+  .proc__bg i { animation: none; will-change: auto; }
+  .proc__bg::after { display: none; }
+}
 .hscroll__bar { display: none; }
 
 .hscroll--on { padding: 0; }

@@ -69,7 +69,8 @@ const hsBar = hs && hs.querySelector('.hscroll__bar');
 let hsDistance = 0;
 function setupHScroll() {
   if (!hs) return;
-  const on = !reduceMotion && window.innerWidth > 1000;
+  // На сенсорных экранах прокрутку не перехватываем: палец двигает страницу сам, без отставания
+  const on = !reduceMotion && finePointer && window.innerWidth > 1000;
   hs.classList.toggle('hscroll--on', on);
   if (!on) {
     hs.style.height = '';
