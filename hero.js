@@ -77,9 +77,9 @@
       o.textBaseline = 'middle';
       if (i === 0) {
         const g = o.createLinearGradient(box.pad, 0, box.pad + Math.min(box.w, fitSize * 4.2), 0);
-        g.addColorStop(0, '#8a6cff');
-        g.addColorStop(0.55, '#ff5e7a');
-        g.addColorStop(1, '#ffb347');
+        g.addColorStop(0, '#1f4fe0');
+        g.addColorStop(0.55, '#1e9bff');
+        g.addColorStop(1, '#5fd4ff');
         o.fillStyle = g;
       } else {
         o.fillStyle = fills[i];

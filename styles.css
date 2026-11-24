@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Studio — тёплый чёрный, слоновая кость и закатный градиент
+   Clearline Studio — тёплый чёрный, слоновая кость и тёмно-голубой градиент
    ========================================================================== */
 
 @property --angle {
@@ -20,11 +20,11 @@
   --muted: #9b958b;
   --dim: #5f5a53;
 
-  --g1: #8a6cff;
-  --g2: #ff5e7a;
-  --g3: #ffb347;
+  --g1: #1f4fe0;
+  --g2: #1e9bff;
+  --g3: #5fd4ff;
   --grad: linear-gradient(100deg, var(--g1) 0%, var(--g2) 55%, var(--g3) 100%);
-  --on-grad: #120a0a;
+  --on-grad: #04111f;
 
   --display: "Unbounded", "Manrope", system-ui, sans-serif;
   --font: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -126,7 +126,7 @@ a { color: inherit; }
 .hdr__inner { display: flex; align-items: center; justify-content: space-between; height: 76px; }
 
 .logo { display: inline-flex; align-items: center; gap: .55em; font-family: var(--display); font-weight: 700; font-size: 1.15rem; letter-spacing: -.02em; text-decoration: none; }
-.logo__dot { width: 14px; height: 14px; border-radius: 50%; background: var(--grad); box-shadow: 0 0 18px rgba(255, 94, 122, .6); transition: transform .6s var(--ease-back); }
+.logo__dot { width: 14px; height: 14px; border-radius: 50%; background: var(--grad); box-shadow: 0 0 18px rgba(30, 155, 255, .6); transition: transform .6s var(--ease-back); }
 .logo:hover .logo__dot { transform: scale(1.4); }
 
 .nav { display: flex; align-items: center; gap: 30px; }
@@ -145,8 +145,8 @@ a { color: inherit; }
 .hero::before {
   content: ""; position: absolute; inset: -20% -10% auto; height: 90%; z-index: 0;
   background:
-    radial-gradient(40% 50% at 25% 45%, rgba(138, 108, 255, .22), transparent 70%),
-    radial-gradient(35% 45% at 75% 55%, rgba(255, 94, 122, .16), transparent 70%);
+    radial-gradient(40% 50% at 25% 45%, rgba(31, 79, 224, .26), transparent 70%),
+    radial-gradient(35% 45% at 75% 55%, rgba(30, 155, 255, .16), transparent 70%);
   filter: blur(20px);
   pointer-events: none;
 }
@@ -350,7 +350,7 @@ a { color: inherit; }
 .plan:hover .plan__glare { opacity: 1; }
 .badge { padding: .25em .7em; border-radius: 99px; background: var(--grad); color: var(--on-grad); font-size: .7rem; letter-spacing: .06em; }
 
-.plan--hot { border-color: transparent; background: linear-gradient(180deg, rgba(138,108,255,.12), rgba(255,94,122,.05)); }
+.plan--hot { border-color: transparent; background: linear-gradient(180deg, rgba(31,79,224,.14), rgba(30,155,255,.05)); }
 .plan--hot::before {
   content: ""; position: absolute; inset: 0; z-index: -2; padding: 1.5px; border-radius: inherit;
   background: conic-gradient(from var(--angle), var(--g1), var(--g2), var(--g3), var(--g1));
@@ -391,7 +391,7 @@ a { color: inherit; }
 .contact { overflow: hidden; }
 .contact::before {
   content: ""; position: absolute; left: 50%; top: 10%; width: 900px; height: 600px; transform: translateX(-50%);
-  background: radial-gradient(closest-side, rgba(255, 94, 122, .14), transparent);
+  background: radial-gradient(closest-side, rgba(30, 155, 255, .14), transparent);
   pointer-events: none;
 }
 .contact__title { position: relative; font-family: var(--display); font-size: clamp(2.4rem, 7.4vw, 6.6rem); letter-spacing: -0.05em; line-height: 1; margin-bottom: clamp(40px, 6vw, 80px); }
@@ -419,7 +419,7 @@ a { color: inherit; }
 .field input:focus + span, .field input:not(:placeholder-shown) + span,
 .field textarea:focus + span, .field textarea:not(:placeholder-shown) + span { transform: translateY(-.62em) scale(.74); }
 .field input:hover, .field textarea:hover { border-color: var(--line-2); }
-.field input:focus, .field textarea:focus { outline: none; border-color: var(--g2); background: rgba(255, 94, 122, .04); }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--g2); background: rgba(30, 155, 255, .04); }
 .field input:focus + span, .field textarea:focus + span { color: var(--g3); }
 /* Выбор тарифа — кнопки вместо системного списка */
 .pick { margin: 0; padding: 0; border: 0; min-width: 0; }
@@ -448,7 +448,7 @@ a { color: inherit; }
 .footer__link[hidden] { display: none; }
 .footer__mark {
   margin: 30px 0 -0.22em; text-align: center;
-  font-family: var(--display); font-weight: 800; font-size: clamp(4rem, 17vw, 15rem); letter-spacing: -0.035em; line-height: 1;
+  font-family: var(--display); font-weight: 800; font-size: clamp(2.6rem, 11.5vw, 10.5rem); letter-spacing: -0.035em; line-height: 1;
   background: linear-gradient(180deg, rgba(244,240,232,.16), rgba(244,240,232,0) 85%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
   user-select: none;
