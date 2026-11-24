@@ -248,18 +248,22 @@
           <h2>Расскажите о проекте</h2>
           <p>Оставьте заявку, и мы ответим в течение рабочего дня. Первая консультация бесплатная.</p>
           <ul class="contact__links">
-            <li><a href="https://t.me/your_username" target="_blank" rel="noopener">Telegram: @your_username</a></li>
+            <li><a href="https://t.me/your_username" target="_blank" rel="noopener noreferrer">Telegram: @your_username</a></li>
             <li><a href="mailto:hello@example.com">hello@example.com</a></li>
           </ul>
         </div>
         <form class="form" id="contact-form" novalidate>
+          <!-- Ловушка для спам-ботов: поле скрыто от людей, боты его заполняют -->
+          <div class="form__hp" aria-hidden="true">
+            <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+          </div>
           <label>
             Имя
-            <input type="text" name="name" required autocomplete="name">
+            <input type="text" name="name" required maxlength="100" autocomplete="name">
           </label>
           <label>
             Telegram или e-mail
-            <input type="text" name="contact" required>
+            <input type="text" name="contact" required maxlength="200">
           </label>
           <label>
             Тариф
@@ -273,7 +277,11 @@
           </label>
           <label>
             О проекте
-            <textarea name="message" rows="4" placeholder="Коротко: что за проект и какие сроки"></textarea>
+            <textarea name="message" rows="4" maxlength="3000" placeholder="Коротко: что за проект и какие сроки"></textarea>
+          </label>
+          <label class="form__consent">
+            <input type="checkbox" name="consent" required>
+            <span>Я согласен(-на) на обработку моих данных для ответа на заявку согласно <a href="datenschutz.html">Datenschutzerklärung</a>.</span>
           </label>
           <button type="submit" class="btn btn--block">Отправить заявку</button>
           <p class="form__status" role="status" aria-live="polite"></p>

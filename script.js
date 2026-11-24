@@ -27,8 +27,14 @@ document.querySelectorAll('[data-plan]').forEach((btn) => {
 // Форма заявки.
 // Сейчас данные никуда не отправляются: подключите Formspree, Telegram-бота или свой бэкенд
 // в функции sendForm.
+//
+// Защита от спама здесь — только первый фильтр против простых ботов. Сервис или бэкенд,
+// который принимает заявку, обязан сам проверять и ограничивать данные (длина, частота
+// запросов), и никогда не вставлять их в HTML без экранирования.
 const form = document.getElementById('contact-form');
 const statusEl = form.querySelector('.form__status');
+const formOpenedAt = Date.now();
+const MIN_FILL_TIME_MS = 3000; // человек не заполнит форму быстрее 3 секунд
 
 async function sendForm(data) {
   // Пример для Formspree:
@@ -44,24 +50,36 @@ async function sendForm(data) {
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
+  // Бот: заполнил скрытое поле или отправил форму мгновенно.
+  // Делаем вид, что всё прошло успешно, но ничего не отправляем.
+  const isBot = form.elements.website.value !== '' || Date.now() - formOpenedAt < MIN_FILL_TIME_MS;
+  if (isBot) {
+    form.reset();
+    statusEl.textContent = 'Спасибо! Мы свяжемся с вами в течение рабочего дня.';
+    return;
+  }
+
   let valid = true;
   form.querySelectorAll('[required]').forEach((field) => {
-    const empty = !field.value.trim();
+    const empty = field.type === 'checkbox' ? !field.checked : !field.value.trim();
     field.setAttribute('aria-invalid', String(empty));
     if (empty) valid = false;
   });
 
   if (!valid) {
-    statusEl.textContent = 'Заполните имя и контакт для связи.';
+    statusEl.textContent = 'Заполните имя, контакт и подтвердите согласие на обработку данных.';
     return;
   }
+
+  const data = new FormData(form);
+  data.delete('website');
 
   const button = form.querySelector('button[type="submit"]');
   button.disabled = true;
   statusEl.textContent = 'Отправляем…';
 
   try {
-    const res = await sendForm(new FormData(form));
+    const res = await sendForm(data);
     if (!res.ok) throw new Error();
     form.reset();
     statusEl.textContent = 'Спасибо! Мы свяжемся с вами в течение рабочего дня.';

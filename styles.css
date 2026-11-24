@@ -285,6 +285,12 @@ a { color: inherit; }
 .form textarea { resize: vertical; }
 .form [aria-invalid="true"] { border-color: var(--accent); }
 .form__status { margin: 0; font-size: .92rem; min-height: 1.4em; }
+.form .form__consent { display: flex; gap: 10px; align-items: flex-start; font-size: .85rem; line-height: 1.45; color: #b9b3a9; }
+.form .form__consent input { width: 18px; height: 18px; flex: none; margin: 2px 0 0; padding: 0; accent-color: var(--accent); }
+.form .form__consent a { color: var(--dark-text); }
+.form__consent input[aria-invalid="true"] { outline: 2px solid var(--accent); outline-offset: 2px; }
+.form__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form { position: relative; }
 
 /* Footer */
 .footer { background: var(--dark); color: #8f897f; border-top: 1px solid #2c2a27; font-size: .9rem; }

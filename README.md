@@ -8,6 +8,10 @@
 - `fonts/` — шрифт Manrope (SIL OFL 1.1), хранится локально: никаких запросов к Google Fonts (DSGVO)
 - `consent.js` + `vendor/cookieconsent/` — cookie-баннер на CookieConsent v3 (MIT), **сейчас выключен**
 
+- `_headers` (Netlify, Cloudflare Pages) и `vercel.json` (Vercel) — заголовки безопасности: CSP, HSTS, защита от встраивания в чужие сайты и т. д.
+- `.well-known/security.txt` — контакт для сообщений об уязвимостях
+- `CHECKLIST.md` — **чек-лист сдачи сайта**: право, DSGVO, безопасность, качество, передача клиенту
+
 Сайт не делает ни одного запроса к сторонним серверам и не ставит cookies, поэтому баннер по §25 TDDDG не нужен.
 
 ## Cookie-баннер
@@ -17,6 +21,13 @@ YouTube и т. п. Инструкция — в комментарии в нач�
 язык берётся из `<html lang>`. После включения в подвале появится ссылка «Cookie-Einstellungen».
 
 Баннер скрыт для ботов и автотестов (`navigator.webdriver`) — это стандартное поведение библиотеки.
+
+## Безопасность
+
+- Строгая Content-Security-Policy: скрипты, стили и шрифты только с самого сайта. Подключаете внешний
+  сервис (например Formspree) — добавьте его адрес в `connect-src` в `_headers` и `vercel.json`.
+- Форма: скрытое поле-ловушка и минимальное время заполнения против ботов, ограничения длины,
+  обязательное согласие с Datenschutz. Серверная проверка всё равно нужна на стороне приёмника заявок.
 
 ## Запуск
 
@@ -30,7 +41,7 @@ python3 -m http.server 8000
 
 - Название студии, имена и описание команды
 - Цены и сроки в разделе `#pricing`
-- Контакты: `@your_username` и `hello@example.com`
+- Контакты: `@your_username`, `hello@example.com` и `security@example.com` в `.well-known/security.txt`
 - Страницы `impressum.html` и `datenschutz.html` (на них ссылается баннер; обязательны в Германии)
 - Отправку формы: функция `sendForm` в `script.js` (Formspree, Telegram-бот или свой бэкенд)
 
