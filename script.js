@@ -20,7 +20,7 @@ document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(fa
 
 /* ---------- Появление ---------- */
 const reveals = document.querySelectorAll('.reveal');
-if (reduceMotion || !('IntersectionObserver' in window)) {
+if (!('IntersectionObserver' in window)) {
   reveals.forEach((el) => el.classList.add('in'));
 } else {
   const io = new IntersectionObserver((entries) => {
@@ -54,7 +54,7 @@ if (scrubEl) {
   scrubWords = [...scrubEl.querySelectorAll('.w')];
 }
 function updateScrub() {
-  if (!scrubEl || reduceMotion) return;
+  if (!scrubEl) return;
   const r = scrubEl.getBoundingClientRect();
   const vh = window.innerHeight;
   const p = clamp((vh * 0.85 - r.top) / (r.height + vh * 0.3), 0, 1);
@@ -129,7 +129,7 @@ setupHScroll();
 onScroll();
 
 /* ---------- Эффекты для мыши ---------- */
-if (finePointer && !reduceMotion) {
+if (finePointer) {
   // Свечение за курсором в услугах
   const svc = document.querySelector('[data-orb]');
   const orb = document.querySelector('.orb');
@@ -201,7 +201,6 @@ if (finePointer && !reduceMotion) {
 /* ---------- Счётчики ---------- */
 function countUp(el) {
   const target = parseFloat(el.dataset.count);
-  if (reduceMotion) { el.textContent = String(target); return; }
   const start = performance.now();
   const step = (now) => {
     const t = Math.min((now - start) / 1800, 1);
@@ -264,7 +263,6 @@ let shown = 199;
 calc.addEventListener('change', () => {
   const { once, monthly } = calcState();
   monthlyEl.textContent = monthly ? `+ ${fmt(monthly)} € в месяц: хостинг и поддержка` : '';
-  if (reduceMotion) { sumEl.textContent = `от ${fmt(once)} €`; shown = once; return; }
   const from = shown;
   const start = performance.now();
   const step = (now) => {

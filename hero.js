@@ -1,7 +1,8 @@
 /*
  * Hero: слово из тысяч частиц.
  * Частицы собираются в слово, разлетаются при смене слова, убегают от курсора/пальца,
- * а по клику взрываются. Без анимаций (prefers-reduced-motion) — обычный градиентный текст.
+ * а по клику взрываются. При «Уменьшении движения» частицы сразу стоят на месте,
+ * а слова сменяются плавным затуханием, без разлёта. Без canvas — обычный градиентный текст.
  */
 (() => {
   const WORDS = ['сайты', 'лендинги', 'магазины', 'бренды'];
@@ -16,19 +17,17 @@
   const ctx = canvas.getContext && canvas.getContext('2d');
 
   /* ---------- Запасной вариант: текст со сменой слов ---------- */
-  if (reduceMotion || !ctx) {
+  if (!ctx) {
     document.documentElement.classList.add('no-particles');
     let i = 0;
-    if (!reduceMotion) {
-      setInterval(() => {
-        wordEl.classList.add('is-swapping');
-        setTimeout(() => {
-          i = (i + 1) % WORDS.length;
-          wordEl.textContent = WORDS[i];
-          wordEl.classList.remove('is-swapping');
-        }, 450);
-      }, CYCLE_MS);
-    }
+    setInterval(() => {
+      wordEl.classList.add('is-swapping');
+      setTimeout(() => {
+        i = (i + 1) % WORDS.length;
+        wordEl.textContent = WORDS[i];
+        wordEl.classList.remove('is-swapping');
+      }, 450);
+    }, CYCLE_MS);
     return;
   }
 
@@ -48,6 +47,9 @@
   let visible = true;
   let lastInteract = 0;
   let cycleTimer = 0;
+  let alpha = 1;           // общая прозрачность (для плавной смены слов)
+  let fadeTo = 1;
+  let pendingWord = -1;
   const pointer = { x: -9999, y: -9999, active: false };
 
   /* ---------- Выборка точек из текста ---------- */
@@ -136,6 +138,8 @@
       for (let i = 0; i < N; i++) {
         if (i < old.N) {
           px[i] = old.px[i]; py[i] = old.py[i]; vx[i] = old.vx[i]; vy[i] = old.vy[i];
+        } else if (reduceMotion) {
+          px[i] = -9999; py[i] = -9999; // встанут на место в assign()
         } else {
           // Новые частицы прилетают из случайных точек экрана
           px[i] = Math.random() * W;
@@ -154,6 +158,7 @@
       const k = (i % count) * 2;
       tx[i] = t[k];
       ty[i] = t[k + 1];
+      if (reduceMotion && !burst) { px[i] = tx[i]; py[i] = ty[i]; vx[i] = 0; vy[i] = 0; }
       if (burst) {
         const a = Math.random() * Math.PI * 2;
         const f = 2 + Math.random() * 5;
@@ -165,7 +170,13 @@
 
   function nextWord() {
     wordIndex = (wordIndex + 1) % WORDS.length;
-    assign(wordIndex, true);
+    if (reduceMotion) {
+      // Без разлёта: гасим слово, ставим частицы на новые места, проявляем
+      pendingWord = wordIndex;
+      fadeTo = 0;
+    } else {
+      assign(wordIndex, true);
+    }
   }
 
   function scheduleCycle() {
@@ -211,12 +222,18 @@
       py[i] += vy[i];
     }
 
+    if (alpha !== fadeTo) {
+      alpha += Math.sign(fadeTo - alpha) * 0.04;
+      if (Math.abs(alpha - fadeTo) < 0.04) alpha = fadeTo;
+      if (alpha === 0 && pendingWord >= 0) { assign(pendingWord, false); pendingWord = -1; fadeTo = 1; }
+    }
+
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = fill;
 
     // Мягкое свечение
-    ctx.globalAlpha = 0.16;
+    ctx.globalAlpha = 0.16 * alpha;
     ctx.beginPath();
     const gs = size * 2.6;
     const go = (gs - size) / 2;
@@ -224,7 +241,7 @@
     ctx.fill();
 
     // Сами частицы
-    ctx.globalAlpha = 1;
+    ctx.globalAlpha = alpha;
     ctx.beginPath();
     for (let i = 0; i < N; i++) ctx.rect(px[i], py[i], size, size);
     ctx.fill();

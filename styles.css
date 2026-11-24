@@ -515,11 +515,13 @@ a { color: inherit; }
   .marquee { padding: 18px 0; }
 }
 
+/* «Уменьшение движения»: оставляем мягкие эффекты (появление, свет, частицы),
+   убираем движение по экрану: сдвиги, размытие, бегущую строку, зерно */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-  .js .reveal { opacity: 1; transform: none; filter: none; }
-  .manifesto__text .w { opacity: 1; }
-  .grain { display: none; }
+  .js .reveal { transform: none; filter: none; }
+  .js .reveal.in { transition: opacity 1.2s var(--ease); transition-delay: var(--d, 0s); }
+  .marquee__track, .kicker__dot::after, .grain { animation: none; }
+  .faq details[open] p { animation: none; }
 }
 
 /* ---------- Cookie-баннер (CookieConsent v3) в стиле сайта ---------- */
