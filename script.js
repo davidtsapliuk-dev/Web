@@ -138,7 +138,33 @@ function updateRail() {
     if (b.top <= mid && b.bottom > mid) cur = r;
   });
   railSections.forEach((r) => r.link.classList.toggle('is-on', r === cur));
-  rail.classList.toggle('is-shown', window.scrollY > window.innerHeight * 0.6);
+  const inHScroll = cur && cur.sec === hs && hs.classList.contains('hscroll--on');
+  rail.classList.toggle('is-shown', window.scrollY > window.innerHeight * 0.6 && !inHScroll);
+}
+
+/* ---------- Процесс: активный шаг и свет за курсором ---------- */
+const steps = [...document.querySelectorAll('.step')];
+function updateSteps() {
+  if (!steps.length) return;
+  const horizontal = hs && hs.classList.contains('hscroll--on');
+  const cx = window.innerWidth * 0.55;
+  const cy = window.innerHeight * 0.5;
+  let best = null;
+  let bestD = Infinity;
+  steps.forEach((st) => {
+    const r = st.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > window.innerHeight) return;
+    const d = horizontal ? Math.abs(r.left + r.width / 2 - cx) : Math.abs(r.top + r.height / 2 - cy);
+    if (d < bestD) { bestD = d; best = st; }
+  });
+  steps.forEach((st) => st.classList.toggle('is-active', st === best));
+}
+if (finePointer) {
+  steps.forEach((st) => st.addEventListener('pointermove', (e) => {
+    const r = st.getBoundingClientRect();
+    st.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    st.style.setProperty('--my', `${e.clientY - r.top}px`);
+  }));
 }
 
 /* ---------- Общий обработчик прокрутки ---------- */
@@ -152,6 +178,7 @@ function onScroll() {
   updateHScroll();
   updateNav();
   updateRail();
+  updateSteps();
   ticking = false;
 }
 window.addEventListener('scroll', () => {
