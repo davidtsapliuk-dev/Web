@@ -280,6 +280,47 @@ a { color: inherit; }
 .hero__lead { max-width: 470px; margin: 0; font-size: 1.1rem; color: var(--muted); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 12px; }
 
+/* ---------- Разделение разделов при прокрутке ---------- */
+/* Каждый второй раздел — отдельная «панель» со своим фоном и голубым свечением */
+.section--panel {
+  margin: 0 clamp(8px, 1.6vw, 24px);
+  border: 1px solid var(--line);
+  border-radius: clamp(26px, 4vw, 52px);
+  background:
+    radial-gradient(55% 45% at 8% 0%, rgba(30, 155, 255, .11), transparent 70%),
+    radial-gradient(40% 35% at 100% 100%, rgba(31, 79, 224, .08), transparent 70%),
+    #0f1117;
+}
+/* Метка раздела — табличка с точкой */
+.label--sec {
+  padding: .55em 1.1em .55em .9em;
+  border: 1px solid var(--line-2); border-radius: 99px;
+  background: rgba(255, 255, 255, .03);
+  color: var(--text);
+}
+.label--sec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--grad); box-shadow: 0 0 12px rgba(30, 155, 255, .8); }
+/* Огромный контурный номер раздела на фоне заголовка */
+.section__head[data-num], .hscroll__intro[data-num], .contact__wrap[data-num] { position: relative; isolation: isolate; }
+.section__head[data-num]::after, .hscroll__intro[data-num]::after, .contact__wrap[data-num]::after {
+  content: attr(data-num);
+  position: absolute; right: 0; top: -.28em; z-index: -1;
+  font-family: var(--display); font-weight: 800; font-size: clamp(6rem, 17vw, 15rem); line-height: 1; letter-spacing: -.06em;
+  color: transparent; -webkit-text-stroke: 1.5px rgba(95, 212, 255, .13);
+  pointer-events: none; user-select: none;
+}
+/* Полоса прогресса прокрутки */
+.progress { position: fixed; left: 0; top: 0; right: 0; z-index: 110; height: 2px; background: var(--grad); transform-origin: left; transform: scaleX(0); pointer-events: none; }
+/* Навигатор по разделам справа (широкие экраны) */
+.rail { position: fixed; right: 22px; top: 50%; z-index: 60; translate: 0 -50%; display: none; flex-direction: column; gap: 4px; opacity: 0; transition: opacity .5s var(--ease); }
+.rail.is-shown { opacity: 1; }
+.rail a { display: flex; align-items: center; justify-content: flex-end; gap: 12px; height: 26px; text-decoration: none; }
+.rail span { font-size: .74rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); opacity: 0; translate: 6px 0; transition: opacity .35s, translate .35s var(--ease), color .3s; white-space: nowrap; }
+.rail i { flex: none; width: 8px; height: 8px; border-radius: 99px; background: rgba(255, 255, 255, .25); transition: height .4s var(--ease), background-color .3s; }
+.rail a:hover span, .rail a.is-on span { opacity: 1; translate: 0 0; }
+.rail a.is-on span { color: var(--text); }
+.rail a.is-on i { height: 26px; background: var(--g2); box-shadow: 0 0 12px rgba(30, 155, 255, .7); }
+@media (min-width: 1280px) { .rail { display: flex; } }
+
 /* ---------- Манифест ---------- */
 .manifesto { padding: clamp(60px, 8vw, 120px) 0 clamp(70px, 10vw, 140px); }
 .manifesto__text { max-width: 1100px; margin: 0; font-family: var(--display); font-weight: 500; font-size: clamp(1.5rem, 3.6vw, 3.1rem); line-height: 1.28; letter-spacing: -0.025em; }

@@ -103,6 +103,44 @@ function updateNav() {
   navLinks.forEach((a) => a.classList.toggle('is-current', a === current));
 }
 
+/* ---------- Полоса прогресса и навигатор по разделам ---------- */
+const progressEl = document.createElement('div');
+progressEl.className = 'progress';
+progressEl.setAttribute('aria-hidden', 'true');
+document.body.appendChild(progressEl);
+const railSections = [...document.querySelectorAll('main section[id]:not(#top)')]
+  .map((sec) => {
+    const lab = sec.querySelector('.label--sec');
+    return lab ? { sec, name: lab.textContent.replace(/^\d+\s*—\s*/, '') } : null;
+  })
+  .filter(Boolean);
+const rail = document.createElement('nav');
+rail.className = 'rail';
+rail.setAttribute('aria-label', 'Разделы страницы');
+railSections.forEach((r) => {
+  const a = document.createElement('a');
+  a.href = `#${r.sec.id}`;
+  const span = document.createElement('span');
+  span.textContent = r.name;
+  a.append(span, document.createElement('i'));
+  rail.appendChild(a);
+  r.link = a;
+});
+document.body.appendChild(rail);
+function updateRail() {
+  const doc = document.documentElement;
+  const max = doc.scrollHeight - window.innerHeight;
+  progressEl.style.transform = `scaleX(${max > 0 ? Math.min(window.scrollY / max, 1) : 0})`;
+  const mid = window.innerHeight * 0.45;
+  let cur = null;
+  railSections.forEach((r) => {
+    const b = r.sec.getBoundingClientRect();
+    if (b.top <= mid && b.bottom > mid) cur = r;
+  });
+  railSections.forEach((r) => r.link.classList.toggle('is-on', r === cur));
+  rail.classList.toggle('is-shown', window.scrollY > window.innerHeight * 0.6);
+}
+
 /* ---------- Общий обработчик прокрутки ---------- */
 let ticking = false;
 function onScroll() {
@@ -113,6 +151,7 @@ function onScroll() {
   updateScrub();
   updateHScroll();
   updateNav();
+  updateRail();
   ticking = false;
 }
 window.addEventListener('scroll', () => {
