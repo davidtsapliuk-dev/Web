@@ -163,6 +163,7 @@ a { color: inherit; }
 }
 @keyframes deskIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
 .win {
+  --shade: 0;
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
   border-radius: 1em; overflow: hidden;
@@ -175,10 +176,10 @@ a { color: inherit; }
   contain: layout paint;
 }
 .win[data-pos="0"] { z-index: 4; transform: none; opacity: 1; }
-.win[data-pos="1"] { z-index: 3; transform: translate(7%, -9%) scale(.9); opacity: .7; --dim: .4; }
-.win[data-pos="2"] { z-index: 2; transform: translate(14%, -18%) scale(.8); opacity: .45; --dim: .55; }
-.win[data-pos="3"] { z-index: 1; transform: translate(21%, -27%) scale(.7); opacity: .2; --dim: .65; }
-.win::after { content: ""; position: absolute; inset: 0; z-index: 2; background: #05070c; opacity: var(--dim, 0); transition: opacity .9s var(--ease); pointer-events: none; }
+.win[data-pos="1"] { z-index: 3; transform: translate(7%, -9%) scale(.9); opacity: .7; --shade: .4; }
+.win[data-pos="2"] { z-index: 2; transform: translate(14%, -18%) scale(.8); opacity: .45; --shade: .55; }
+.win[data-pos="3"] { z-index: 1; transform: translate(21%, -27%) scale(.7); opacity: .2; --shade: .65; }
+.win::after { content: ""; position: absolute; inset: 0; z-index: 2; background: #05070c; opacity: var(--shade, 0); transition: opacity .9s var(--ease); pointer-events: none; }
 .win.is-out { z-index: 5; transform: translate(-12%, 14%) scale(.86) rotate(-3deg); opacity: 0; transition-duration: .6s; }
 .win.no-anim { transition: none; }
 .win__bar { flex: none; display: flex; align-items: center; gap: .45em; height: 2.2em; padding: 0 .9em; background: rgba(255,255,255,.06); border-bottom: 1px solid rgba(255,255,255,.07); }
