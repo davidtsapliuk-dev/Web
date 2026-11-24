@@ -262,7 +262,7 @@ function calcState() {
 let shown = 199;
 calc.addEventListener('change', () => {
   const { once, monthly } = calcState();
-  monthlyEl.textContent = monthly ? `+ ${fmt(monthly)} € в месяц: хостинг и поддержка` : '';
+  monthlyEl.textContent = monthly ? `+ ${fmt(monthly)} € в месяц (хостинг, SSL, обновления, поддержка и мелкие правки)` : '';
   const from = shown;
   const start = performance.now();
   const step = (now) => {
