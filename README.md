@@ -1,11 +1,13 @@
-# Нить — сайт инди веб-студии
+# Studio — сайт инди веб-студии
 
-Одностраничный сайт студии: услуги, цены, процесс работы, команда, FAQ и форма заявки.
+Одностраничный сайт студии: услуги, цены с калькулятором, процесс работы, команда, FAQ и форма заявки.
+Дизайн: строгая тёмная «тайлинговая» тема — блоки-плитки, стекло, градиентная рамка у активного блока.
+Название `studio` — временное.
 
 Чистый HTML/CSS/JS без сборки:
 
-- `index.html`, `styles.css`, `script.js` — сайт
-- `fonts/` — шрифт Manrope (SIL OFL 1.1), хранится локально: никаких запросов к Google Fonts (DSGVO)
+- `index.html`, `styles.css`, `script.js`, `boot.js` — сайт
+- `fonts/` — шрифты Manrope и JetBrains Mono (SIL OFL 1.1), хранится локально: никаких запросов к Google Fonts (DSGVO)
 - `consent.js` + `vendor/cookieconsent/` — cookie-баннер на CookieConsent v3 (MIT), **сейчас выключен**
 
 - `_headers` (Netlify, Cloudflare Pages) и `vercel.json` (Vercel) — заголовки безопасности: CSP, HSTS, защита от встраивания в чужие сайты и т. д.
