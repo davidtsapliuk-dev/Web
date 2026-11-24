@@ -280,23 +280,8 @@ a { color: inherit; }
 .hero__lead { max-width: 470px; margin: 0; font-size: 1.1rem; color: var(--muted); }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 12px; }
 
-/* ---------- Бегущая строка ---------- */
-.marquee {
-  overflow: hidden;
-  padding: 26px 0;
-  border-block: 1px solid var(--line);
-  transform: rotate(-1.5deg) scale(1.03);
-  background: var(--bg-2);
-}
-.marquee__track { display: flex; align-items: center; gap: 40px; width: max-content; animation: marquee 38s linear infinite; }
-.marquee span { font-family: var(--display); font-size: clamp(1.6rem, 3.6vw, 3rem); font-weight: 700; letter-spacing: -0.03em; white-space: nowrap; }
-.marquee span:nth-of-type(even) { color: transparent; -webkit-text-stroke: 1px rgba(244, 240, 232, .5); }
-.marquee i { font-style: normal; font-size: 1.4rem; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-@keyframes marquee { to { transform: translateX(-50%); } }
-.marquee:hover .marquee__track { animation-play-state: paused; }
-
 /* ---------- Манифест ---------- */
-.manifesto { padding: clamp(110px, 16vw, 220px) 0 clamp(70px, 10vw, 140px); }
+.manifesto { padding: clamp(60px, 8vw, 120px) 0 clamp(70px, 10vw, 140px); }
 .manifesto__text { max-width: 1100px; margin: 0; font-family: var(--display); font-weight: 500; font-size: clamp(1.5rem, 3.6vw, 3.1rem); line-height: 1.28; letter-spacing: -0.025em; }
 .manifesto__text .w { opacity: .14; transition: opacity .35s linear; }
 .manifesto__text .w.on { opacity: 1; }
@@ -643,7 +628,6 @@ a { color: inherit; }
   .form__row { grid-template-columns: 1fr; }
   .faq summary { padding-right: 44px; }
   .faq details p { padding-right: 0; }
-  .marquee { padding: 18px 0; }
 }
 
 /* «Уменьшение движения»: оставляем мягкие эффекты (появление, свет, частицы),
@@ -651,7 +635,7 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .js .reveal { transform: none; filter: none; }
   .js .reveal.in { transition: opacity 1.2s var(--ease); transition-delay: var(--d, 0s); }
-  .marquee__track, .grain, .mock__steam i { animation: none; }
+  .grain, .mock__steam i { animation: none; }
   .faq details[open] p { animation: none; }
 }
 
