@@ -258,6 +258,19 @@ function notify(text) {
     }, 600);
   };
   const loop = () => { clearTimeout(timer); if (active && !document.hidden) timer = setTimeout(() => { next(); loop(); }, 3800); };
+  // На широких экранах ставим стопку ровно посередине между словом «Сайты» и правым краем экрана
+  const hero = desk.closest('.hero');
+  const word = hero && hero.querySelector('.hero__word');
+  const place = () => {
+    if (!word || window.innerWidth <= 1000) { desk.style.left = ''; desk.style.right = ''; return; }
+    const hr = hero.getBoundingClientRect();
+    const mid = (word.getBoundingClientRect().right - hr.left + hr.width) / 2;
+    desk.style.left = `${Math.round(mid - desk.offsetWidth / 2)}px`;
+    desk.style.right = 'auto';
+  };
+  place();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(place);
+  window.addEventListener('resize', place);
   paint();
   loop();
   if ('IntersectionObserver' in window) {
