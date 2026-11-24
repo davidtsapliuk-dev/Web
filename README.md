@@ -43,9 +43,9 @@ python3 -m http.server 8000
 
 - Название студии, имя и описание в разделе «Студия»
 - Цены и сроки в разделе `#pricing`
-- Контакты: `@your_username`, `hello@example.com` и `security@example.com` в `.well-known/security.txt`
+- Контакты: WhatsApp `wa.me/490000000000` и `+49 000 0000000`, `hello@example.com` и `security@example.com` в `.well-known/security.txt`
 - Страницы `impressum.html` и `datenschutz.html` (на них ссылается баннер; обязательны в Германии)
-- Отправку формы: функция `sendForm` в `script.js` (Formspree, Telegram-бот или свой бэкенд)
+- Отправку формы: функция `sendForm` в `script.js` (Formspree или свой бэкенд)
 
 ## Публикация
 

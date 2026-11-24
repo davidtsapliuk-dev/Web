@@ -242,7 +242,7 @@ document.querySelectorAll('[data-plan]').forEach((btn) => {
 });
 
 /* ---------- Форма заявки ----------
-   Сейчас данные никуда не отправляются: подключите Formspree, Telegram-бота или свой бэкенд
+   Сейчас данные никуда не отправляются: подключите Formspree или свой бэкенд
    в функции sendForm (и добавьте адрес сервиса в Content-Security-Policy: connect-src).
 
    Защита от спама здесь — только первый фильтр против простых ботов. Сервис или бэкенд,
@@ -301,7 +301,7 @@ form.addEventListener('submit', async (e) => {
     statusEl.textContent = SUCCESS;
     notify('Заявка отправлена — скоро отвечу');
   } catch {
-    statusEl.textContent = 'Не получилось отправить. Напишите мне в Telegram.';
+    statusEl.textContent = 'Не получилось отправить. Напишите мне в WhatsApp или на почту.';
   } finally {
     button.disabled = false;
   }
