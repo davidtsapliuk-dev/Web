@@ -232,6 +232,40 @@ function notify(text) {
   toastTimer = setTimeout(() => toastEl.classList.remove('is-shown'), 3600);
 }
 
+/* ---------- «Рабочие столы» в первом экране: окна листаются по кругу ---------- */
+(() => {
+  const desk = document.querySelector('.desk');
+  if (!desk) return;
+  const wins = [...desk.querySelectorAll('.win')];
+  const dots = [...desk.querySelectorAll('.desk__dots i')];
+  let order = wins.map((_, i) => i); // order[0] — окно спереди
+  let timer = 0;
+  let active = true;
+  const paint = () => {
+    order.forEach((w, pos) => { wins[w].dataset.pos = String(pos); });
+    dots.forEach((d, i) => d.classList.toggle('is-on', i === order[0]));
+  };
+  const next = () => {
+    const front = wins[order[0]];
+    front.classList.add('is-out');               // окно уезжает вправо
+    setTimeout(() => {
+      order = [...order.slice(1), order[0]];
+      front.classList.add('no-anim');
+      front.classList.remove('is-out');
+      paint();                                   // и встаёт в конец стопки
+      void front.offsetWidth;
+      front.classList.remove('no-anim');
+    }, 600);
+  };
+  const loop = () => { clearTimeout(timer); if (active && !document.hidden) timer = setTimeout(() => { next(); loop(); }, 3800); };
+  paint();
+  loop();
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => { active = e.isIntersecting; loop(); }).observe(desk);
+  }
+  document.addEventListener('visibilitychange', loop);
+})();
+
 /* ---------- Тариф → форма ---------- */
 document.querySelectorAll('[data-plan]').forEach((btn) => {
   btn.addEventListener('click', () => {
