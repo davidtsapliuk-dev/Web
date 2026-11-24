@@ -193,7 +193,7 @@ if (finePointer) {
   window.addEventListener('pointermove', (e) => {
     mx = e.clientX; my = e.clientY;
     cursor.classList.remove('is-hidden');
-    cursor.classList.toggle('is-link', !!e.target.closest('a, button, label, summary, select'));
+    cursor.classList.toggle('is-link', !!e.target.closest('a, button, label, summary'));
   }, { passive: true });
   document.documentElement.addEventListener('pointerleave', () => cursor.classList.add('is-hidden'));
 }
@@ -233,11 +233,10 @@ function notify(text) {
 }
 
 /* ---------- Тариф → форма ---------- */
-const planSelect = document.getElementById('plan-select');
-const messageEl = document.getElementById('message');
 document.querySelectorAll('[data-plan]').forEach((btn) => {
   btn.addEventListener('click', () => {
-    planSelect.value = btn.dataset.plan;
+    const radio = document.querySelector(`input[name="plan"][value="${btn.dataset.plan}"]`);
+    if (radio) radio.checked = true;
     notify(`«${btn.dataset.plan}» выбран — он уже в форме заявки`);
   });
 });

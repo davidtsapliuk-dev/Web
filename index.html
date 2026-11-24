@@ -289,15 +289,15 @@
               <label class="field"><input type="text" name="name" required maxlength="100" autocomplete="name" placeholder=" "><span>Имя</span></label>
               <label class="field"><input type="text" name="contact" required maxlength="200" placeholder=" "><span>Telegram или e-mail</span></label>
             </div>
-            <label class="field field--select">
-              <select name="plan" id="plan-select">
-                <option>Пока не знаю</option>
-                <option>Лендинг</option>
-                <option>Сайт компании</option>
-                <option>Другое</option>
-              </select>
-              <span>Тариф</span>
-            </label>
+            <fieldset class="pick">
+              <legend>Тариф</legend>
+              <div class="pick__opts">
+                <label><input type="radio" name="plan" value="Лендинг"><span>Лендинг</span></label>
+                <label><input type="radio" name="plan" value="Сайт компании"><span>Сайт компании</span></label>
+                <label><input type="radio" name="plan" value="Пока не знаю" checked><span>Пока не знаю</span></label>
+                <label><input type="radio" name="plan" value="Другое"><span>Другое</span></label>
+              </div>
+            </fieldset>
             <label class="field"><textarea name="message" id="message" rows="3" maxlength="3000" placeholder=" "></textarea><span>О проекте</span></label>
             <label class="consent">
               <input type="checkbox" name="consent" required>
