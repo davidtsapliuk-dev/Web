@@ -145,7 +145,9 @@ function updateRail() {
 /* ---------- Процесс: активный шаг и свет за курсором ---------- */
 const steps = [...document.querySelectorAll('.step')];
 function updateSteps() {
-  if (!steps.length) return;
+  if (!steps.length || !hs) return;
+  const hr = hs.getBoundingClientRect();
+  if (hr.bottom < 0 || hr.top > window.innerHeight) return; // раздел далеко — не считаем
   const horizontal = hs && hs.classList.contains('hscroll--on');
   const cx = window.innerWidth * 0.55;
   const cy = window.innerHeight * 0.5;
@@ -165,6 +167,14 @@ if (finePointer) {
     st.style.setProperty('--mx', `${e.clientX - r.left}px`);
     st.style.setProperty('--my', `${e.clientY - r.top}px`);
   }));
+}
+
+/* ---------- Анимации вне экрана — на паузу ---------- */
+if ('IntersectionObserver' in window) {
+  const offIO = new IntersectionObserver((entries) => entries.forEach((e) => {
+    e.target.classList.toggle('anim-off', !e.isIntersecting);
+  }), { rootMargin: '100px 0px' });
+  document.querySelectorAll('.hero, .hscroll, .work').forEach((el) => offIO.observe(el));
 }
 
 /* ---------- Общий обработчик прокрутки ---------- */
@@ -250,14 +260,17 @@ if (finePointer) {
   cursor.setAttribute('aria-hidden', 'true');
   document.body.appendChild(cursor);
   let cx = -100, cy = -100, mx = -100, my = -100;
+  let following = false;
+  // Кадры рисуем только пока кольцо догоняет мышь, а не постоянно
   const follow = () => {
     cx += (mx - cx) * 0.2; cy += (my - cy) * 0.2;
     cursor.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
-    requestAnimationFrame(follow);
+    if (Math.abs(mx - cx) > 0.3 || Math.abs(my - cy) > 0.3) requestAnimationFrame(follow);
+    else following = false;
   };
-  requestAnimationFrame(follow);
   window.addEventListener('pointermove', (e) => {
     mx = e.clientX; my = e.clientY;
+    if (!following) { following = true; requestAnimationFrame(follow); }
     cursor.classList.remove('is-hidden');
     cursor.classList.toggle('is-link', !!e.target.closest('a, button, label, summary'));
   }, { passive: true });
