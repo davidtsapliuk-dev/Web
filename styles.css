@@ -26,8 +26,8 @@
   --grad: linear-gradient(100deg, var(--g1) 0%, var(--g2) 55%, var(--g3) 100%);
   --on-grad: #04111f;
 
-  --display: "Unbounded", "Manrope", system-ui, sans-serif;
-  --font: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Unbounded", "Unbounded Fallback", system-ui, sans-serif;
+  --font: "Manrope", "Manrope Fallback", system-ui, -apple-system, "Segoe UI", sans-serif;
 
   --radius: 22px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -764,3 +764,19 @@ a { color: inherit; }
 
 /* Анимации вне экрана ставим на паузу — меньше нагрузка на телефон */
 .anim-off, .anim-off *, .anim-off *::before, .anim-off *::after { animation-play-state: paused !important; }
+
+/* Нижние разделы браузер не отрисовывает, пока до них не долистали */
+#about, #faq, .footer { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+
+/* Анимации, привязанные к прокрутке, считает сам браузер (вне основного потока).
+   Где это не поддерживается, работает прежний вариант на JS */
+@keyframes sdaGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes hsMove { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(calc(var(--hs-d, 0px) * -1), 0, 0); } }
+@supports (animation-timeline: view()) {
+  .progress { animation: sdaGrow linear both; animation-timeline: scroll(root); }
+  .hscroll--sda { view-timeline: --hs block; view-timeline-inset: 0px; }
+  .hscroll--sda .hscroll__track { animation: hsMove linear both; animation-timeline: --hs; animation-range: contain 0% contain 100%; }
+  .hscroll--sda .hscroll__bar span { animation: sdaGrow linear both; animation-timeline: --hs; animation-range: contain 0% contain 100%; }
+}
+/* Ленту «Процесса» на паузу не ставим: её положение задаёт прокрутка */
+.anim-off .hscroll__track, .anim-off .hscroll__bar span { animation-play-state: running !important; }

@@ -63,15 +63,19 @@ function updateScrub() {
 }
 
 /* ---------- Процесс: горизонтальная прокрутка ---------- */
+// Поддерживает ли браузер анимации, привязанные к прокрутке (CSS animation-timeline)
+const SDA = !!(window.CSS && CSS.supports && CSS.supports('animation-timeline: view()'));
 const hs = document.querySelector('.hscroll');
 const hsTrack = hs && hs.querySelector('.hscroll__track');
 const hsBar = hs && hs.querySelector('.hscroll__bar');
 let hsDistance = 0;
 function setupHScroll() {
   if (!hs) return;
-  // На сенсорных экранах прокрутку не перехватываем: палец двигает страницу сам, без отставания
-  const on = !reduceMotion && finePointer && window.innerWidth > 1000;
+  // Горизонтальная лента: на компьютере всегда, на сенсорных экранах — только если её двигает
+  // сам браузер (scroll-driven animations), иначе она отставала бы от пальца
+  const on = !reduceMotion && window.innerWidth > 1000 && (finePointer || SDA);
   hs.classList.toggle('hscroll--on', on);
+  hs.classList.toggle('hscroll--sda', on && SDA);
   if (!on) {
     hs.style.height = '';
     hsTrack.style.transform = '';
@@ -80,10 +84,11 @@ function setupHScroll() {
   }
   hsDistance = Math.max(0, hsTrack.scrollWidth - window.innerWidth);
   hs.style.height = `${hsDistance + window.innerHeight}px`;
+  hsTrack.style.setProperty('--hs-d', `${hsDistance}px`);
   updateHScroll();
 }
 function updateHScroll() {
-  if (!hsDistance) return;
+  if (!hsDistance || SDA) return; // при SDA ленту двигает CSS
   const top = hs.getBoundingClientRect().top;
   const p = clamp(-top / hsDistance, 0, 1);
   hsTrack.style.transform = `translate3d(${-p * hsDistance}px, 0, 0)`;
@@ -131,7 +136,7 @@ document.body.appendChild(rail);
 function updateRail() {
   const doc = document.documentElement;
   const max = doc.scrollHeight - window.innerHeight;
-  progressEl.style.transform = `scaleX(${max > 0 ? Math.min(window.scrollY / max, 1) : 0})`;
+  if (!SDA) progressEl.style.transform = `scaleX(${max > 0 ? Math.min(window.scrollY / max, 1) : 0})`;
   const mid = window.innerHeight * 0.45;
   let cur = null;
   railSections.forEach((r) => {
