@@ -1,12 +1,18 @@
 /*
- * Hero: слово из тысяч частиц.
- * Частицы собираются в слово, разлетаются при смене слова, убегают от курсора/пальца,
- * а по клику взрываются. При «Уменьшении движения» частицы сразу стоят на месте,
- * а слова сменяются плавным затуханием, без разлёта. Без canvas — обычный градиентный текст.
+ * Hero: глитч-слово в стиле киберпанка.
+ * Слово рисуется на canvas: цветное расслоение (бирюзовый/розовый), рваные горизонтальные
+ * полосы, развёртка. Сбои случаются сами по себе, усиливаются под курсором,
+ * по клику — сильный сбой и смена слова с «перешифровкой» символов.
+ * При «Уменьшении движения» — без мерцания: слово стоит, слова сменяются плавным затуханием.
  */
 (() => {
   const WORDS = ['сайты', 'лендинги', 'бренды'];
-  const CYCLE_MS = 7000;   // как долго держится каждое слово
+  const CYCLE_MS = 6000;         // как долго держится каждое слово
+  const SCRAMBLE_MS = 750;       // длительность «перешифровки»
+  const TICK_MS = 70;            // как часто меняется рисунок сбоя (рвано, не плавно)
+  const GLYPHS = '#%&@$*+=<>/\\|_01█▓▒░';
+  const CYAN = '#00f0ff';
+  const MAGENTA = '#ff2a6d';
 
   const hero = document.querySelector('.hero');
   const canvas = hero && hero.querySelector('.hero__canvas');
@@ -16,7 +22,7 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const ctx = canvas.getContext && canvas.getContext('2d');
 
-  /* ---------- Запасной вариант: текст со сменой слов ---------- */
+  /* ---------- Запасной вариант без canvas: текст со сменой слов ---------- */
   if (!ctx) {
     document.documentElement.classList.add('no-particles');
     let i = 0;
@@ -35,63 +41,71 @@
   let dpr = 1;
   let W = 0;
   let H = 0;
+  const box = { x: 0, y: 0, w: 0, h: 0, pad: 0 };  // где стоит слово внутри hero
+  let fontSize = 100;
   let wordIndex = 0;
-  let targets = [];        // точки для каждого слова: [Float32Array x,y,x,y...]
-  let gap = 4;             // шаг сетки выборки
-  let size = 2.4;          // размер частицы
-  let radius = 120;        // радиус влияния курсора
-  let fill = null;         // градиентная заливка
-  let N = 0;
-  let px, py, vx, vy, tx, ty, seed;
+  let text = WORDS[0];          // что нарисовано сейчас
+  let target = WORDS[0];        // к какому слову идём
+  let scrambleStart = -1;
+  let energy = 0.6;             // сила сбоя 0..1 (затухает)
+  let nextSpike = 0;
+  let lastTick = 0;
+  let alpha = 1;                // для плавной смены слов без движения
+  let fadeTo = 1;
   let running = false;
   let visible = true;
   let lastInteract = 0;
   let cycleTimer = 0;
-  let alpha = 1;           // общая прозрачность (для плавной смены слов)
-  let fadeTo = 1;
-  let pendingWord = -1;
-  const pointer = { x: -9999, y: -9999, active: false };
+  let dirty = true;
+  const pointer = { x: -9999, y: -9999, over: false, speed: 0 };
+  // Параметры текущего кадра сбоя
+  let split = 2;
+  let jitterY = 0;
+  let slices = [];
+  let blocks = [];
 
-  /* ---------- Выборка точек из текста ---------- */
-  function sampleWord(word, fontSize, boxW, boxH) {
-    const off = document.createElement('canvas');
-    off.width = Math.ceil(boxW);
-    off.height = Math.ceil(boxH);
-    const o = off.getContext('2d', { willReadFrequently: true });
-    let fs = fontSize;
-    const setFont = () => {
-      o.font = `800 ${fs}px Unbounded, Manrope, sans-serif`;
-      if ('letterSpacing' in o) o.letterSpacing = `${-0.05 * fs}px`;
-    };
-    setFont();
-    // Слово должно поместиться по ширине
-    const maxW = boxW * 0.98;
-    const w = o.measureText(word).width;
-    if (w > maxW) { fs *= maxW / w; setFont(); }
-    o.textBaseline = 'middle';
-    o.fillStyle = '#fff';
-    o.fillText(word, 0, boxH * 0.54);
+  // Три слоя: основной (градиент) и два цветных для расслоения
+  const layers = [0, 1, 2].map(() => {
+    const c = document.createElement('canvas');
+    return { c, x: c.getContext('2d') };
+  });
 
-    const data = o.getImageData(0, 0, off.width, off.height).data;
-    const pts = [];
-    const g = Math.max(3, Math.round(fs / 40));
-    for (let y = 0; y < off.height; y += g) {
-      for (let x = 0; x < off.width; x += g) {
-        if (data[(y * off.width + x) * 4 + 3] > 140) pts.push(x, y);
-      }
-    }
-    return { pts, g, width: Math.min(w, maxW) };
+  function fontFor(fs) { return `800 ${fs}px Unbounded, Manrope, sans-serif`; }
+  function setFont(o, fs) {
+    o.font = fontFor(fs);
+    if ('letterSpacing' in o) o.letterSpacing = `${-0.05 * fs}px`;
   }
 
-  function shuffle(arr) {
-    // Перемешиваем пары координат
-    for (let i = arr.length / 2 - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const ax = arr[i * 2], ay = arr[i * 2 + 1];
-      arr[i * 2] = arr[j * 2]; arr[i * 2 + 1] = arr[j * 2 + 1];
-      arr[j * 2] = ax; arr[j * 2 + 1] = ay;
-    }
-    return arr;
+  // Размер шрифта, чтобы слово точно влезло по ширине
+  let fitSize = 100;
+  function fit(word) {
+    const o = layers[0].x;
+    setFont(o, fontSize);
+    const w = o.measureText(word).width;
+    const maxW = box.w * 0.98;
+    fitSize = w > maxW ? fontSize * (maxW / w) : fontSize;
+  }
+
+  function renderLayers(str) {
+    const fills = [null, CYAN, MAGENTA];
+    layers.forEach((l, i) => {
+      const o = l.x;
+      o.setTransform(dpr, 0, 0, dpr, 0, 0);
+      o.clearRect(0, 0, l.c.width, l.c.height);
+      setFont(o, fitSize);
+      o.textBaseline = 'middle';
+      if (i === 0) {
+        const g = o.createLinearGradient(box.pad, 0, box.pad + Math.min(box.w, fitSize * 4.2), 0);
+        g.addColorStop(0, '#8a6cff');
+        g.addColorStop(0.55, '#ff5e7a');
+        g.addColorStop(1, '#ffb347');
+        o.fillStyle = g;
+      } else {
+        o.fillStyle = fills[i];
+      }
+      o.fillText(str, box.pad, box.h * 0.54);
+    });
+    dirty = true;
   }
 
   /* ---------- Настройка под размер экрана ---------- */
@@ -104,78 +118,31 @@
     canvas.height = Math.round(H * dpr);
 
     const wr = wordEl.getBoundingClientRect();
-    const boxW = wordEl.parentElement.getBoundingClientRect().width;
-    const fontSize = parseFloat(getComputedStyle(wordEl).fontSize);
-    const left = wr.left - r.left;
-    const top = wr.top - r.top;
+    box.x = wr.left - r.left;
+    box.y = wr.top - r.top;
+    box.w = wordEl.parentElement.getBoundingClientRect().width;
+    box.h = wr.height;
+    box.pad = Math.round(Math.max(40, box.h * 0.6)); // запас по бокам для сдвигов
+    fontSize = parseFloat(getComputedStyle(wordEl).fontSize);
 
-    let widest = 0;
-    targets = WORDS.map((word) => {
-      const s = sampleWord(word, fontSize, boxW, wr.height);
-      gap = s.g;
-      widest = Math.max(widest, s.width);
-      const pts = shuffle(s.pts);
-      for (let i = 0; i < pts.length; i += 2) { pts[i] += left; pts[i + 1] += top; }
-      return pts;
+    layers.forEach((l) => {
+      l.c.width = Math.round((box.w + box.pad * 2) * dpr);
+      l.c.height = Math.round(box.h * dpr);
     });
-
-    size = Math.max(1.6, gap * 0.62);
-    radius = Math.max(70, Math.min(170, fontSize * 0.85));
-
-    fill = ctx.createLinearGradient(left, 0, left + Math.max(widest, 200), 0);
-    fill.addColorStop(0, '#8a6cff');
-    fill.addColorStop(0.55, '#ff5e7a');
-    fill.addColorStop(1, '#ffb347');
-
-    const need = Math.max(...targets.map((t) => t.length / 2));
-    if (need !== N) {
-      const old = { N, px, py, vx, vy };
-      N = need;
-      px = new Float32Array(N); py = new Float32Array(N);
-      vx = new Float32Array(N); vy = new Float32Array(N);
-      tx = new Float32Array(N); ty = new Float32Array(N);
-      seed = new Float32Array(N);
-      for (let i = 0; i < N; i++) {
-        if (i < old.N) {
-          px[i] = old.px[i]; py[i] = old.py[i]; vx[i] = old.vx[i]; vy[i] = old.vy[i];
-        } else if (reduceMotion) {
-          px[i] = -9999; py[i] = -9999; // встанут на место в assign()
-        } else {
-          // Новые частицы прилетают из случайных точек экрана
-          px[i] = Math.random() * W;
-          py[i] = Math.random() * H;
-        }
-        seed[i] = Math.random() * Math.PI * 2;
-      }
-    }
-    assign(wordIndex, false);
+    fit(target);
+    renderLayers(text);
   }
 
-  function assign(index, burst) {
-    const t = targets[index];
-    const count = t.length / 2;
-    for (let i = 0; i < N; i++) {
-      const k = (i % count) * 2;
-      tx[i] = t[k];
-      ty[i] = t[k + 1];
-      if (reduceMotion && !burst) { px[i] = tx[i]; py[i] = ty[i]; vx[i] = 0; vy[i] = 0; }
-      if (burst) {
-        const a = Math.random() * Math.PI * 2;
-        const f = 2 + Math.random() * 5;
-        vx[i] += Math.cos(a) * f;
-        vy[i] += Math.sin(a) * f;
-      }
-    }
-  }
-
+  /* ---------- Смена слова ---------- */
   function nextWord() {
     wordIndex = (wordIndex + 1) % WORDS.length;
+    target = WORDS[wordIndex];
     if (reduceMotion) {
-      // Без разлёта: гасим слово, ставим частицы на новые места, проявляем
-      pendingWord = wordIndex;
-      fadeTo = 0;
+      fadeTo = 0; // погасим, поменяем, проявим
     } else {
-      assign(wordIndex, true);
+      fit(target);
+      scrambleStart = performance.now();
+      energy = 1;
     }
   }
 
@@ -183,68 +150,127 @@
     clearInterval(cycleTimer);
     cycleTimer = setInterval(() => {
       if (!visible || document.hidden) return;
-      if (performance.now() - lastInteract < 3000) return;
+      if (performance.now() - lastInteract < 2500) return;
       nextWord();
     }, CYCLE_MS);
   }
 
+  const rand = (a, b) => a + Math.random() * (b - a);
+
+  /* ---------- Новый рисунок сбоя ---------- */
+  function tick(now) {
+    // Перешифровка: буквы проявляются слева направо, остальное — случайные символы
+    if (scrambleStart >= 0) {
+      const p = Math.min((now - scrambleStart) / SCRAMBLE_MS, 1);
+      const shown = Math.floor(p * target.length);
+      let s = target.slice(0, shown);
+      for (let i = shown; i < target.length; i++) s += GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      if (p >= 1) { s = target; scrambleStart = -1; }
+      text = s;
+      renderLayers(text);
+    }
+
+    const lvl = reduceMotion ? 0 : energy;
+    split = reduceMotion ? 2 : 2 + lvl * rand(6, 16);
+    jitterY = lvl > 0.3 ? rand(-1, 1) * lvl * 4 : 0;
+
+    slices = [];
+    if (lvl > 0.12) {
+      const n = 1 + Math.floor(lvl * rand(2, 7));
+      for (let i = 0; i < n; i++) {
+        const sh = rand(3, box.h * (0.06 + lvl * 0.16));
+        slices.push({ y: rand(0, box.h - sh), h: sh, dx: rand(-1, 1) * lvl * box.h * 0.6 });
+      }
+    }
+    blocks = [];
+    if (lvl > 0.5) {
+      const n = Math.floor(lvl * 6);
+      for (let i = 0; i < n; i++) {
+        blocks.push({
+          x: rand(0, box.w), y: rand(0, box.h),
+          w: rand(10, box.h * 0.9), h: rand(2, 9),
+          c: Math.random() < 0.5 ? CYAN : MAGENTA,
+        });
+      }
+    }
+    dirty = true;
+  }
+
   /* ---------- Кадр ---------- */
+  function drawLayer(l, dx, dy, sy, sh) {
+    const lw = l.c.width / dpr;
+    if (sh === undefined) {
+      ctx.drawImage(l.c, box.x - box.pad + dx, box.y + dy, lw, box.h);
+    } else {
+      ctx.drawImage(l.c, 0, sy * dpr, l.c.width, sh * dpr, box.x - box.pad + dx, box.y + sy + dy, lw, sh);
+    }
+  }
+
+  function drawWord(dx, sy, sh) {
+    // Цветные копии — под основным словом, видны только по краям
+    ctx.globalCompositeOperation = 'screen';
+    ctx.globalAlpha = 0.9 * alpha;
+    drawLayer(layers[1], dx - split, jitterY, sy, sh);
+    drawLayer(layers[2], dx + split, -jitterY, sy, sh);
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = alpha;
+    drawLayer(layers[0], dx, 0, sy, sh);
+  }
+
   function frame(now) {
     if (!running) return;
-    const t = now * 0.0015;
-    const R = radius;
-    const R2 = R * R;
-    const mx = pointer.x;
-    const my = pointer.y;
 
-    for (let i = 0; i < N; i++) {
-      // Лёгкое «дыхание» вокруг цели
-      const gx = tx[i] + Math.sin(t + seed[i]) * 0.7;
-      const gy = ty[i] + Math.cos(t * 1.3 + seed[i]) * 0.7;
-      let ax = (gx - px[i]) * 0.018;
-      let ay = (gy - py[i]) * 0.018;
-
-      if (pointer.active) {
-        const dx = px[i] - mx;
-        const dy = py[i] - my;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < R2 && d2 > 0.01) {
-          const d = Math.sqrt(d2);
-          const f = (1 - d / R);
-          const force = f * f * 9;
-          ax += (dx / d) * force;
-          ay += (dy / d) * force;
-        }
-      }
-      vx[i] = (vx[i] + ax) * 0.9;
-      vy[i] = (vy[i] + ay) * 0.9;
-      px[i] += vx[i];
-      py[i] += vy[i];
+    // Сбои сами по себе, иногда
+    if (!reduceMotion && now > nextSpike) {
+      energy = Math.max(energy, rand(0.35, 0.9));
+      nextSpike = now + rand(1400, 4200);
     }
+    // Курсор над словом: чем быстрее движется, тем сильнее сбой
+    if (!reduceMotion && pointer.over) {
+      energy = Math.max(energy, Math.min(1, 0.22 + pointer.speed / 50));
+      pointer.speed *= 0.85;
+    }
+    energy *= 0.92;
+    if (energy < 0.01) energy = 0;
 
+    // Плавная смена слов в режиме без движения
     if (alpha !== fadeTo) {
-      alpha += Math.sign(fadeTo - alpha) * 0.04;
-      if (Math.abs(alpha - fadeTo) < 0.04) alpha = fadeTo;
-      if (alpha === 0 && pendingWord >= 0) { assign(pendingWord, false); pendingWord = -1; fadeTo = 1; }
+      alpha += Math.sign(fadeTo - alpha) * 0.05;
+      if (Math.abs(alpha - fadeTo) < 0.05) alpha = fadeTo;
+      if (alpha === 0) { text = target; fit(target); renderLayers(text); fadeTo = 1; }
+      dirty = true;
     }
 
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = fill;
+    if (now - lastTick > TICK_MS && (energy > 0 || scrambleStart >= 0 || slices.length)) {
+      lastTick = now;
+      tick(now);
+    }
 
-    // Мягкое свечение
-    ctx.globalAlpha = 0.16 * alpha;
-    ctx.beginPath();
-    const gs = size * 2.6;
-    const go = (gs - size) / 2;
-    for (let i = 0; i < N; i++) ctx.rect(px[i] - go, py[i] - go, gs, gs);
-    ctx.fill();
+    if (dirty) {
+      dirty = false;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, W, H);
+      drawWord(0);
 
-    // Сами частицы
-    ctx.globalAlpha = alpha;
-    ctx.beginPath();
-    for (let i = 0; i < N; i++) ctx.rect(px[i], py[i], size, size);
-    ctx.fill();
+      // Рваные полосы: вырезаем и рисуем со сдвигом
+      for (const s of slices) {
+        ctx.clearRect(box.x - box.pad, box.y + s.y, box.w + box.pad * 2, s.h);
+        drawWord(s.dx, s.y, s.h);
+      }
+
+      // Цифровой мусор
+      for (const b of blocks) {
+        ctx.globalAlpha = 0.7;
+        ctx.fillStyle = b.c;
+        ctx.fillRect(box.x + b.x, box.y + b.y, b.w, b.h);
+      }
+
+      // Развёртка поверх слова
+      ctx.globalAlpha = 0.16;
+      ctx.fillStyle = '#0b0a0d';
+      for (let y = box.y; y < box.y + box.h; y += 4) ctx.fillRect(box.x - box.pad, y, box.w + box.pad * 2, 2);
+      ctx.globalAlpha = 1;
+    }
 
     requestAnimationFrame(frame);
   }
@@ -252,38 +278,29 @@
   function start() {
     if (running) return;
     running = true;
+    dirty = true;
     requestAnimationFrame(frame);
   }
   function stop() { running = false; }
 
   /* ---------- Взаимодействие ---------- */
-  function toLocal(e) {
-    const r = canvas.getBoundingClientRect();
-    pointer.x = e.clientX - r.left;
-    pointer.y = e.clientY - r.top;
-  }
+  let lastPX = 0;
+  let lastPY = 0;
   hero.addEventListener('pointermove', (e) => {
-    toLocal(e);
-    pointer.active = true;
+    const r = canvas.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    pointer.speed = Math.max(pointer.speed, Math.hypot(x - lastPX, y - lastPY));
+    lastPX = x; lastPY = y;
+    pointer.over = x > box.x - 40 && x < box.x + box.w && y > box.y - 40 && y < box.y + box.h + 40;
     lastInteract = performance.now();
   }, { passive: true });
-  hero.addEventListener('pointerleave', () => { pointer.active = false; });
-  hero.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') pointer.active = false; });
+  hero.addEventListener('pointerleave', () => { pointer.over = false; });
   hero.addEventListener('pointerdown', (e) => {
     if (e.target.closest('a, button')) return;
-    toLocal(e);
     lastInteract = performance.now();
-    // Взрыв вокруг точки клика и смена слова
-    for (let i = 0; i < N; i++) {
-      const dx = px[i] - pointer.x;
-      const dy = py[i] - pointer.y;
-      const d = Math.sqrt(dx * dx + dy * dy) || 1;
-      const f = Math.max(0, 1 - d / (radius * 3)) * 38;
-      vx[i] += (dx / d) * f;
-      vy[i] += (dy / d) * f;
-    }
-    setTimeout(nextWord, 400);
-    if (e.pointerType !== 'mouse') pointer.active = true;
+    if (!reduceMotion) energy = 1;
+    nextWord();
   });
 
   /* ---------- Видимость и размеры ---------- */
@@ -304,9 +321,11 @@
   });
 
   /* ---------- Запуск после загрузки шрифта ---------- */
-  const ready = document.fonts && document.fonts.load
+  const fontsReady = document.fonts && document.fonts.load
     ? Promise.all([document.fonts.load('800 100px Unbounded', WORDS.join('')), document.fonts.ready])
     : Promise.resolve();
+  // Не ждём шрифт дольше 2 секунд
+  const ready = Promise.race([fontsReady, new Promise((r) => setTimeout(r, 2000))]);
   ready.catch(() => {}).then(() => {
     setup();
     start();
