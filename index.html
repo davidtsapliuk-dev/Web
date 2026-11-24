@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Нить — инди веб-студия</title>
   <meta name="description" content="Небольшая независимая веб-студия: сайты, лендинги и интернет-магазины под ключ. Прозрачные цены, сроки и общение напрямую с разработчиком.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" href="fonts/manrope-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23ff5a36'/><path d='M8 22V10l16 12V10' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 </head>
@@ -286,10 +285,14 @@
   <footer class="footer">
     <div class="container footer__inner">
       <span>© <span id="year"></span> Студия «Нить»</span>
-      <a href="#top">Наверх ↑</a>
+      <div class="footer__links">
+        <button type="button" class="footer__link" data-cc="show-preferencesModal" hidden>Cookie-Einstellungen</button>
+        <a href="#top">Наверх ↑</a>
+      </div>
     </div>
   </footer>
 
   <script src="script.js"></script>
+  <script src="consent.js"></script>
 </body>
 </html>

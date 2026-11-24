@@ -290,7 +290,38 @@ a { color: inherit; }
 .footer { background: var(--dark); color: #8f897f; border-top: 1px solid #2c2a27; font-size: .9rem; }
 .footer__inner { display: flex; justify-content: space-between; padding-top: 24px; padding-bottom: 24px; }
 .footer a { text-decoration: none; }
-.footer a:hover { color: var(--dark-text); }
+.footer a:hover, .footer__link:hover { color: var(--dark-text); }
+.footer__links { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: flex-end; }
+.footer__link { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+.footer__link[hidden] { display: none; }
+
+/* Cookie-баннер (CookieConsent v3) в стиле сайта */
+#cc-main {
+  --cc-font-family: "Manrope", system-ui, sans-serif;
+  --cc-modal-border-radius: var(--radius);
+  --cc-btn-border-radius: 999px;
+  --cc-bg: var(--surface);
+  --cc-primary-color: var(--text);
+  --cc-secondary-color: var(--muted);
+  --cc-separator-border-color: var(--border);
+  --cc-btn-primary-bg: var(--accent);
+  --cc-btn-primary-color: var(--accent-text);
+  --cc-btn-primary-border-color: var(--accent);
+  --cc-btn-primary-hover-bg: #e94a27;
+  --cc-btn-primary-hover-border-color: #e94a27;
+  --cc-btn-secondary-bg: var(--bg-alt);
+  --cc-btn-secondary-color: var(--text);
+  --cc-btn-secondary-border-color: var(--border);
+  --cc-btn-secondary-hover-bg: var(--border);
+  --cc-btn-secondary-hover-border-color: var(--border);
+  --cc-toggle-on-bg: var(--accent);
+  --cc-cookie-category-block-bg: var(--bg-alt);
+  --cc-cookie-category-block-border: var(--border);
+  --cc-cookie-category-block-hover-bg: var(--bg-alt);
+  --cc-footer-bg: var(--bg-alt);
+  --cc-footer-color: var(--muted);
+  --cc-footer-border-color: var(--border);
+}
 
 /* Responsive */
 @media (max-width: 980px) {

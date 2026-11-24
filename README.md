@@ -2,7 +2,21 @@
 
 Одностраничный сайт студии: услуги, цены, процесс работы, команда, FAQ и форма заявки.
 
-Чистый HTML/CSS/JS без сборки: `index.html`, `styles.css`, `script.js`.
+Чистый HTML/CSS/JS без сборки:
+
+- `index.html`, `styles.css`, `script.js` — сайт
+- `fonts/` — шрифт Manrope (SIL OFL 1.1), хранится локально: никаких запросов к Google Fonts (DSGVO)
+- `consent.js` + `vendor/cookieconsent/` — cookie-баннер на CookieConsent v3 (MIT), **сейчас выключен**
+
+Сайт не делает ни одного запроса к сторонним серверам и не ставит cookies, поэтому баннер по §25 TDDDG не нужен.
+
+## Cookie-баннер
+
+Включается одной строкой `CONSENT_ENABLED = true` в `consent.js`, когда появится аналитика, реклама,
+YouTube и т. п. Инструкция — в комментарии в начале файла. Тексты на немецком и русском,
+язык берётся из `<html lang>`. После включения в подвале появится ссылка «Cookie-Einstellungen».
+
+Баннер скрыт для ботов и автотестов (`navigator.webdriver`) — это стандартное поведение библиотеки.
 
 ## Запуск
 
@@ -17,6 +31,7 @@ python3 -m http.server 8000
 - Название студии, имена и описание команды
 - Цены и сроки в разделе `#pricing`
 - Контакты: `@your_username` и `hello@example.com`
+- Страницы `impressum.html` и `datenschutz.html` (на них ссылается баннер; обязательны в Германии)
 - Отправку формы: функция `sendForm` в `script.js` (Formspree, Telegram-бот или свой бэкенд)
 
 ## Публикация
