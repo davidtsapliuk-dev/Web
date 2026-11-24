@@ -287,7 +287,7 @@ a { color: inherit; }
 .plan__price { margin: 0; font-family: var(--display); font-size: clamp(2rem, 3.2vw, 2.7rem); font-weight: 700; letter-spacing: -0.04em; white-space: nowrap; }
 .plan__price small { font-family: var(--font); font-size: .9rem; font-weight: 500; letter-spacing: 0; color: var(--muted); }
 .plan__monthly { margin: .35rem 0 0; font-size: .95rem; font-weight: 600; color: var(--text); opacity: .8; }
-.plan__monthly span { display: block; margin-top: .2rem; font-size: .82rem; font-weight: 400; color: var(--muted); }
+.plan__monthly span { font-size: .82rem; font-weight: 400; color: var(--muted); }
 .plan__time { margin: .4rem 0 1.8rem; font-size: .88rem; color: var(--g3); font-weight: 600; }
 .plan__list { list-style: none; margin: 0 0 2rem; padding: 1.4rem 0 0; border-top: 1px solid var(--line); flex: 1; display: grid; gap: .75em; align-content: start; }
 .plan__list li { position: relative; padding-left: 1.7em; font-size: .95rem; }
