@@ -4,402 +4,323 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Studio — веб-студия</title>
-  <meta name="description" content="Независимая веб-студия: быстрые сайты с чистым кодом, индивидуальным дизайном и соблюдением DSGVO. Прозрачные цены и общение напрямую с разработчиками.">
-  <meta name="theme-color" content="#08090d">
+  <meta name="description" content="Независимая веб-студия: сайты, лендинги и интернет-магазины с индивидуальным дизайном, ручным кодом и соблюдением DSGVO.">
+  <meta name="theme-color" content="#0b0a0d">
   <meta name="color-scheme" content="dark">
-  <link rel="preload" href="fonts/manrope-cyrillic-800-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="fonts/jetbrains-mono-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/unbounded-cyrillic-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/manrope-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="fonts/fonts.css">
   <link rel="stylesheet" href="styles.css">
   <script src="boot.js"></script>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%2333ccff'/><stop offset='1' stop-color='%2300ff99'/></linearGradient></defs><rect width='32' height='32' rx='8' fill='%2308090d'/><rect x='6' y='6' width='9' height='20' rx='2.5' fill='url(%23g)'/><rect x='17' y='6' width='9' height='9' rx='2.5' fill='url(%23g)' opacity='.7'/><rect x='17' y='17' width='9' height='9' rx='2.5' fill='url(%23g)' opacity='.45'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%238a6cff'/><stop offset='.55' stop-color='%23ff5e7a'/><stop offset='1' stop-color='%23ffb347'/></linearGradient></defs><rect width='32' height='32' rx='9' fill='%230b0a0d'/><circle cx='16' cy='16' r='8' fill='url(%23g)'/></svg>">
 </head>
 <body>
   <a class="skip-link" href="#main">К содержимому</a>
 
-  <div class="backdrop" aria-hidden="true">
-    <div class="backdrop__blob backdrop__blob--a"></div>
-    <div class="backdrop__blob backdrop__blob--b"></div>
-    <div class="backdrop__grid"></div>
-  </div>
-
-  <header class="header">
-    <div class="container header__inner">
-      <a href="#top" class="logo" aria-label="Studio — на главную">
-        <svg class="logo__mark" viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="2" y="2" width="9" height="20" rx="2.5"/>
-          <rect x="13" y="2" width="9" height="9" rx="2.5"/>
-          <rect x="13" y="13" width="9" height="9" rx="2.5"/>
-        </svg>
-        <span>studio</span>
-      </a>
-      <button class="nav-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav">
-        <span></span><span></span>
-      </button>
+  <header class="hdr">
+    <div class="container hdr__inner">
+      <a href="#top" class="logo" aria-label="Studio — на главную"><span class="logo__dot" aria-hidden="true"></span>studio</a>
+      <button class="nav-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="nav"><span></span><span></span></button>
       <nav class="nav" id="nav">
         <a href="#services">Услуги</a>
-        <a href="#pricing">Цены</a>
         <a href="#process">Процесс</a>
-        <a href="#about">О нас</a>
+        <a href="#pricing">Цены</a>
+        <a href="#about">Студия</a>
         <a href="#faq">FAQ</a>
-        <a href="#contact" class="btn btn--small">Обсудить проект</a>
+        <a href="#contact" class="btn btn--small magnetic">Обсудить проект</a>
       </nav>
     </div>
   </header>
 
   <main id="main">
-    <!-- HERO -->
+    <!-- ============ HERO ============ -->
     <section class="hero" id="top">
-      <div class="container tiles hero__grid">
-        <div class="tile tile--hero pop">
-          <p class="label"><span class="pulse" aria-hidden="true"></span>Свободно 2 слота на декабрь</p>
-          <h1 class="hero__title">
-            Сайты без&nbsp;лишнего.<br>
-            <span class="grad">Быстро. Чисто. Ваше.</span>
-          </h1>
-          <p class="hero__lead">
-            Независимая студия из двух человек. Индивидуальный дизайн, ручной код
-            и&nbsp;порядок в&nbsp;каждой детали: от&nbsp;скорости загрузки до&nbsp;DSGVO.
-          </p>
-          <div class="hero__actions">
-            <a href="#contact" class="btn">Обсудить проект</a>
-            <a href="#pricing" class="btn btn--ghost">Цены <span class="mono">→</span></a>
+      <canvas class="hero__canvas" aria-hidden="true"></canvas>
+      <div class="container hero__inner">
+        <p class="kicker reveal"><span class="kicker__dot" aria-hidden="true"></span>Независимая веб-студия · свободно 2 проекта в декабре</p>
+        <h1 class="hero__title">
+          <span class="hero__pre reveal">Мы делаем</span>
+          <span class="hero__word" aria-hidden="true">сайты</span>
+          <span class="sr-only">сайты, лендинги, интернет-магазины и бренды</span>
+        </h1>
+        <div class="hero__bottom">
+          <p class="hero__lead reveal">Индивидуальный дизайн, ручной код и внимание к каждой детали. Без шаблонов, конструкторов и посредников.</p>
+          <div class="hero__actions reveal">
+            <a href="#contact" class="btn magnetic">Обсудить проект</a>
+            <a href="#pricing" class="btn btn--ghost magnetic">Цены</a>
           </div>
         </div>
-
-        <div class="tile tile--metric pop">
-          <p class="label">PageSpeed</p>
-          <div class="ring" aria-hidden="true">
-            <svg viewBox="0 0 120 120">
-              <defs>
-                <linearGradient id="ring-grad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#33ccff"/>
-                  <stop offset="1" stop-color="#00ff99"/>
-                </linearGradient>
-              </defs>
-              <circle class="ring__track" cx="60" cy="60" r="52"/>
-              <circle class="ring__value" cx="60" cy="60" r="52" stroke="url(#ring-grad)"/>
-            </svg>
-            <span class="ring__num mono" data-count="98">98</span>
-          </div>
-          <p class="metric__note">Средний балл наших сайтов на мобильных</p>
-        </div>
-
-        <div class="tile tile--metric pop">
-          <p class="label">Загрузка</p>
-          <p class="metric__big mono"><span data-count="0.6" data-decimals="1">0.6</span><small>s</small></p>
-          <div class="bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-          <p class="metric__note">До первого экрана на 4G</p>
-        </div>
-
-        <div class="tile tile--checks pop">
-          <p class="label">Стандарт каждого проекта</p>
-          <ul class="checks">
-            <li><span class="ok mono">ok</span>DSGVO: без Google Fonts и трекеров</li>
-            <li><span class="ok mono">ok</span>HTTPS и заголовки безопасности</li>
-            <li><span class="ok mono">ok</span>Адаптив: телефон, планшет, 4K</li>
-            <li><span class="ok mono">ok</span>Исходный код и домен — ваши</li>
-          </ul>
-        </div>
+        <p class="hero__hint" aria-hidden="true"><span class="hint--fine">Подвигайте курсором · кликните</span><span class="hint--touch">Коснитесь слова</span></p>
       </div>
     </section>
 
-    <!-- SERVICES -->
+    <!-- ============ MARQUEE ============ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>Дизайн</span><i>✦</i><span>Разработка</span><i>✦</i><span>Лендинги</span><i>✦</i><span>Интернет-магазины</span><i>✦</i><span>DSGVO</span><i>✦</i><span>SEO</span><i>✦</i><span>Поддержка</span><i>✦</i>
+        <span>Дизайн</span><i>✦</i><span>Разработка</span><i>✦</i><span>Лендинги</span><i>✦</i><span>Интернет-магазины</span><i>✦</i><span>DSGVO</span><i>✦</i><span>SEO</span><i>✦</i><span>Поддержка</span><i>✦</i>
+      </div>
+    </div>
+
+    <!-- ============ MANIFESTO ============ -->
+    <section class="manifesto">
+      <div class="container">
+        <p class="label reveal">Манифест</p>
+        <p class="manifesto__text" data-scrub>
+          Мы не продаём шаблоны и не прячемся за менеджерами. Нас двое, и каждый сайт мы делаем так,
+          будто он наш собственный: быстрым, честным, красивым до последнего пикселя
+          и&nbsp;понятным с&nbsp;первой секунды.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ SERVICES ============ -->
     <section class="section" id="services">
       <div class="container">
-        <header class="section__head">
-          <p class="label">01 / Услуги</p>
-          <h2>Что мы делаем</h2>
-        </header>
-        <div class="tiles services">
-          <article class="tile service pop">
-            <span class="service__idx mono">01</span>
-            <svg class="service__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/></svg>
-            <h3>Дизайн</h3>
-            <p>Структура, прототип и макеты для всех экранов. С нуля, под ваш бизнес — ни одного шаблона.</p>
-          </article>
-          <article class="tile service pop">
-            <span class="service__idx mono">02</span>
-            <svg class="service__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16"/></svg>
-            <h3>Разработка</h3>
-            <p>Быстрый чистый код, анимации, формы, интеграции с CRM, оплатой и мессенджерами.</p>
-          </article>
-          <article class="tile service pop">
-            <span class="service__idx mono">03</span>
-            <svg class="service__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l5-6 4 3 7-9"/><path d="M15 8h5v5"/></svg>
-            <h3>Запуск и рост</h3>
-            <p>Домен, хостинг, SEO, аналитика без cookies. После запуска остаёмся на связи.</p>
-          </article>
-          <article class="tile service service--wide pop">
-            <span class="service__idx mono">04</span>
-            <svg class="service__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>
-            <h3>Безопасность и DSGVO</h3>
-            <p>Строгие заголовки безопасности, защита форм от спама, шрифты на своём сервере, cookie-баннер только когда он действительно нужен. Каждый сайт проходит чек-лист перед запуском.</p>
-          </article>
+        <div class="section__head">
+          <p class="label reveal">01 — Услуги</p>
+          <h2 class="h2 reveal">Что мы делаем</h2>
         </div>
+        <ul class="svc" data-orb>
+          <li class="svc__row reveal">
+            <span class="svc__num">01</span>
+            <h3 class="svc__title">Дизайн</h3>
+            <p class="svc__text">Структура, прототип и макеты для всех экранов. С нуля, под ваш бизнес.</p>
+            <span class="svc__arrow" aria-hidden="true">↗</span>
+          </li>
+          <li class="svc__row reveal">
+            <span class="svc__num">02</span>
+            <h3 class="svc__title">Разработка</h3>
+            <p class="svc__text">Быстрый чистый код, анимации, формы, интеграции с CRM и оплатой.</p>
+            <span class="svc__arrow" aria-hidden="true">↗</span>
+          </li>
+          <li class="svc__row reveal">
+            <span class="svc__num">03</span>
+            <h3 class="svc__title">Магазины</h3>
+            <p class="svc__text">Каталог, корзина, онлайн-оплата, доставка и личный кабинет.</p>
+            <span class="svc__arrow" aria-hidden="true">↗</span>
+          </li>
+          <li class="svc__row reveal">
+            <span class="svc__num">04</span>
+            <h3 class="svc__title">Запуск</h3>
+            <p class="svc__text">Домен, хостинг, SEO, DSGVO и безопасность. Остаёмся на связи после запуска.</p>
+            <span class="svc__arrow" aria-hidden="true">↗</span>
+          </li>
+        </ul>
+      </div>
+      <div class="orb" aria-hidden="true"></div>
+    </section>
+
+    <!-- ============ PROCESS (горизонтальная прокрутка) ============ -->
+    <section class="hscroll" id="process">
+      <div class="hscroll__sticky">
+        <div class="hscroll__track">
+          <div class="hscroll__intro">
+            <p class="label">02 — Процесс</p>
+            <h2 class="h2">Пять шагов<br><span class="grad">до запуска</span></h2>
+            <p class="muted">Прозрачно на каждом этапе: вы всегда знаете, что происходит и что будет дальше.</p>
+          </div>
+          <article class="step"><span class="step__num">01</span><h3>Знакомство</h3><p>30-минутный созвон и короткий бриф. Разбираемся в задаче, целях и аудитории.</p></article>
+          <article class="step"><span class="step__num">02</span><h3>Смета</h3><p>Фиксированная цена, сроки и план работ. Подписываем договор.</p></article>
+          <article class="step"><span class="step__num">03</span><h3>Дизайн</h3><p>Прототип, затем макеты. Два раунда правок уже включены.</p></article>
+          <article class="step"><span class="step__num">04</span><h3>Разработка</h3><p>Код и интеграции. Прогресс виден на тестовом адресе в любой момент.</p></article>
+          <article class="step"><span class="step__num">05</span><h3>Запуск</h3><p>Проверка по чек-листу, переезд на ваш домен, передача доступов.</p></article>
+        </div>
+        <div class="hscroll__bar" aria-hidden="true"><span></span></div>
       </div>
     </section>
 
-    <!-- PRICING -->
+    <!-- ============ PRICING ============ -->
     <section class="section" id="pricing">
       <div class="container">
-        <header class="section__head">
-          <p class="label">02 / Цены</p>
-          <h2>Прозрачные тарифы</h2>
-          <p class="section__lead">Фиксированная цена после брифа — в процессе она не растёт. Оплата частями: 50% на старте, 50% после сдачи.</p>
-        </header>
+        <div class="section__head">
+          <p class="label reveal">03 — Цены</p>
+          <h2 class="h2 reveal">Честные цены.<br><span class="grad">Без сюрпризов.</span></h2>
+          <p class="muted section__lead reveal">Фиксированная стоимость после брифа — в процессе она не растёт. Оплата частями: 50% на старте, 50% после сдачи.</p>
+        </div>
 
-        <div class="tiles plans">
-          <article class="tile plan pop">
+        <div class="plans">
+          <article class="plan tilt reveal">
+            <div class="plan__glare" aria-hidden="true"></div>
             <p class="label">Landing</p>
-            <h3>Лендинг</h3>
-            <p class="plan__desc">Одна страница для продукта, услуги или события</p>
-            <p class="plan__price"><span class="mono">от</span> 45&nbsp;000&nbsp;₽</p>
-            <p class="plan__time mono">7–14 дней</p>
+            <h3 class="plan__name">Лендинг</h3>
+            <p class="plan__price"><small>от</small> 45 000 ₽</p>
+            <p class="plan__time">7–14 дней</p>
             <ul class="plan__list">
               <li>До 8 смысловых блоков</li>
               <li>Индивидуальный дизайн</li>
               <li>Адаптив под все экраны</li>
               <li>Форма заявки в Telegram или на почту</li>
-              <li>1 месяц бесплатной поддержки</li>
+              <li>1 месяц поддержки</li>
             </ul>
             <a href="#contact" class="btn btn--ghost btn--block" data-plan="Лендинг">Выбрать</a>
           </article>
 
-          <article class="tile plan plan--featured pop">
-            <p class="label">Business <span class="badge mono">popular</span></p>
-            <h3>Сайт компании</h3>
-            <p class="plan__desc">Многостраничный сайт с удобной админкой</p>
-            <p class="plan__price"><span class="mono">от</span> 120&nbsp;000&nbsp;₽</p>
-            <p class="plan__time mono">3–5 недель</p>
+          <article class="plan plan--hot tilt reveal">
+            <div class="plan__glare" aria-hidden="true"></div>
+            <p class="label">Business <span class="badge">Хит</span></p>
+            <h3 class="plan__name">Сайт компании</h3>
+            <p class="plan__price"><small>от</small> 120 000 ₽</p>
+            <p class="plan__time">3–5 недель</p>
             <ul class="plan__list">
               <li>До 10 уникальных страниц</li>
               <li>Дизайн-концепция и UI-kit</li>
-              <li>Панель управления контентом</li>
+              <li>Удобная админка</li>
               <li>Блог или новости</li>
               <li>SEO-основа и DSGVO</li>
-              <li>3 месяца бесплатной поддержки</li>
+              <li>3 месяца поддержки</li>
             </ul>
             <a href="#contact" class="btn btn--block" data-plan="Сайт компании">Выбрать</a>
           </article>
 
-          <article class="tile plan pop">
+          <article class="plan tilt reveal">
+            <div class="plan__glare" aria-hidden="true"></div>
             <p class="label">Commerce</p>
-            <h3>Интернет-магазин</h3>
-            <p class="plan__desc">Каталог, корзина и онлайн-оплата</p>
-            <p class="plan__price"><span class="mono">от</span> 220&nbsp;000&nbsp;₽</p>
-            <p class="plan__time mono">6–10 недель</p>
+            <h3 class="plan__name">Магазин</h3>
+            <p class="plan__price"><small>от</small> 220 000 ₽</p>
+            <p class="plan__time">6–10 недель</p>
             <ul class="plan__list">
               <li>Каталог с фильтрами и поиском</li>
-              <li>Корзина и оформление заказа</li>
-              <li>Онлайн-оплата и доставка</li>
-              <li>Личный кабинет покупателя</li>
+              <li>Корзина и онлайн-оплата</li>
+              <li>Доставка и личный кабинет</li>
               <li>Импорт товаров из таблиц</li>
-              <li>3 месяца бесплатной поддержки</li>
+              <li>3 месяца поддержки</li>
             </ul>
             <a href="#contact" class="btn btn--ghost btn--block" data-plan="Интернет-магазин">Выбрать</a>
           </article>
-
-          <!-- Калькулятор -->
-          <div class="tile calc pop">
-            <div class="calc__intro">
-              <p class="label">Калькулятор</p>
-              <h3>Соберите свой проект</h3>
-              <p class="muted">Выберите основу и дополнения — стоимость посчитается сразу.</p>
-            </div>
-            <form class="calc__form" id="calc" aria-label="Калькулятор стоимости">
-              <fieldset class="seg">
-                <legend class="label">Основа</legend>
-                <label><input type="radio" name="base" value="45000" data-name="Лендинг" checked><span>Лендинг</span></label>
-                <label><input type="radio" name="base" value="120000" data-name="Сайт компании"><span>Сайт</span></label>
-                <label><input type="radio" name="base" value="220000" data-name="Интернет-магазин"><span>Магазин</span></label>
-              </fieldset>
-              <fieldset class="toggles">
-                <legend class="label">Дополнения</legend>
-                <label class="toggle"><input type="checkbox" value="25000" data-name="логотип"><span class="toggle__ui" aria-hidden="true"></span><span>Логотип и фирстиль</span><b class="mono">+25 000</b></label>
-                <label class="toggle"><input type="checkbox" value="15000" data-name="второй язык"><span class="toggle__ui" aria-hidden="true"></span><span>Второй язык (DE / EN)</span><b class="mono">+15 000</b></label>
-                <label class="toggle"><input type="checkbox" value="12000" data-name="тексты"><span class="toggle__ui" aria-hidden="true"></span><span>Тексты под ключ</span><b class="mono">+12 000</b></label>
-                <label class="toggle"><input type="checkbox" value="6000" data-name="поддержка" data-monthly><span class="toggle__ui" aria-hidden="true"></span><span>Поддержка</span><b class="mono">+6 000/мес</b></label>
-              </fieldset>
-              <div class="calc__total" aria-live="polite">
-                <span class="label">Итого</span>
-                <output class="calc__sum mono" id="calc-sum" for="calc">от 45 000 ₽</output>
-                <span class="calc__monthly mono" id="calc-monthly"></span>
-              </div>
-              <a href="#contact" class="btn" id="calc-cta">Обсудить этот проект</a>
-            </form>
-          </div>
         </div>
+
+        <form class="calc reveal" id="calc" aria-label="Калькулятор стоимости">
+          <div class="calc__col">
+            <p class="label">Калькулятор</p>
+            <div class="seg" role="radiogroup" aria-label="Основа">
+              <label><input type="radio" name="base" value="45000" data-name="Лендинг" checked><span>Лендинг</span></label>
+              <label><input type="radio" name="base" value="120000" data-name="Сайт компании"><span>Сайт</span></label>
+              <label><input type="radio" name="base" value="220000" data-name="Интернет-магазин"><span>Магазин</span></label>
+            </div>
+            <div class="chips" aria-label="Дополнения">
+              <label><input type="checkbox" value="25000" data-name="логотип"><span>Логотип и фирстиль · +25 000</span></label>
+              <label><input type="checkbox" value="15000" data-name="второй язык"><span>Второй язык · +15 000</span></label>
+              <label><input type="checkbox" value="12000" data-name="тексты"><span>Тексты под ключ · +12 000</span></label>
+              <label><input type="checkbox" value="6000" data-name="поддержка" data-monthly><span>Поддержка · +6 000/мес</span></label>
+            </div>
+          </div>
+          <div class="calc__total" aria-live="polite">
+            <span class="label">Итого</span>
+            <output class="calc__sum" id="calc-sum" for="calc">от 45 000 ₽</output>
+            <span class="calc__monthly" id="calc-monthly"></span>
+            <a href="#contact" class="btn magnetic" id="calc-cta">Обсудить этот проект</a>
+          </div>
+        </form>
       </div>
     </section>
 
-    <!-- PROCESS -->
-    <section class="section" id="process">
-      <div class="container">
-        <header class="section__head">
-          <p class="label">03 / Процесс</p>
-          <h2>Пять шагов до запуска</h2>
-        </header>
-        <ol class="tiles steps">
-          <li class="tile step pop">
-            <span class="step__num mono">01</span>
-            <h3>Знакомство</h3>
-            <p>30-минутный созвон и короткий бриф.</p>
-          </li>
-          <li class="tile step pop">
-            <span class="step__num mono">02</span>
-            <h3>Смета</h3>
-            <p>Фиксированная цена, сроки и договор.</p>
-          </li>
-          <li class="tile step pop">
-            <span class="step__num mono">03</span>
-            <h3>Дизайн</h3>
-            <p>Прототип и макеты. Два раунда правок включены.</p>
-          </li>
-          <li class="tile step pop">
-            <span class="step__num mono">04</span>
-            <h3>Разработка</h3>
-            <p>Код и интеграции. Прогресс виден на тестовом адресе.</p>
-          </li>
-          <li class="tile step pop">
-            <span class="step__num mono">05</span>
-            <h3>Запуск</h3>
-            <p>Проверка по чек-листу, домен, передача доступов.</p>
-          </li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- ABOUT -->
+    <!-- ============ ABOUT ============ -->
     <section class="section" id="about">
       <div class="container">
-        <header class="section__head">
-          <p class="label">04 / О нас</p>
-          <h2>Маленькая команда.<br>Полная ответственность.</h2>
-        </header>
-        <div class="tiles about">
-          <div class="tile about__text pop">
-            <p>Мы работаем с малым бизнесом, стартапами, экспертами и творческими проектами. Берём не больше трёх проектов одновременно, поэтому каждому достаётся всё наше внимание.</p>
-            <p class="muted">Без менеджеров-посредников: вы общаетесь напрямую с теми, кто делает ваш сайт. Отвечаем в рабочее время в течение пары часов.</p>
-          </div>
-          <div class="tile stat pop"><p class="stat__num mono"><span data-count="40">40</span>+</p><p class="label">проектов</p></div>
-          <div class="tile stat pop"><p class="stat__num mono"><span data-count="8">8</span></p><p class="label">лет опыта</p></div>
-          <div class="tile stat pop"><p class="stat__num mono"><span data-count="3">3</span></p><p class="label">проекта максимум</p></div>
-          <article class="tile person pop">
-            <div class="person__avatar mono" aria-hidden="true">A</div>
-            <div>
-              <h3>Анна</h3>
-              <p class="muted">Дизайн и арт-дирекшн. 8 лет в UI/UX.</p>
-            </div>
+        <div class="section__head">
+          <p class="label reveal">04 — Студия</p>
+          <h2 class="h2 reveal">Двое. <span class="grad">Без посредников.</span></h2>
+        </div>
+        <div class="stats">
+          <div class="stat reveal"><p class="stat__num"><span data-count="40">40</span>+</p><p class="stat__label">запущенных проектов</p></div>
+          <div class="stat reveal"><p class="stat__num"><span data-count="98">98</span></p><p class="stat__label">средний балл PageSpeed</p></div>
+          <div class="stat reveal"><p class="stat__num"><span data-count="3">3</span></p><p class="stat__label">проекта одновременно, не больше</p></div>
+        </div>
+        <div class="team">
+          <article class="person reveal">
+            <div class="person__ava" aria-hidden="true">А</div>
+            <div><h3>Анна</h3><p class="muted">Дизайн и арт-дирекшн. 8 лет в UI/UX.</p></div>
           </article>
-          <article class="tile person pop">
-            <div class="person__avatar person__avatar--alt mono" aria-hidden="true">D</div>
-            <div>
-              <h3>Давид</h3>
-              <p class="muted">Разработка: frontend, backend и всё между ними.</p>
-            </div>
+          <article class="person reveal">
+            <div class="person__ava person__ava--2" aria-hidden="true">Д</div>
+            <div><h3>Давид</h3><p class="muted">Разработка: frontend, backend и всё между ними.</p></div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- FAQ -->
+    <!-- ============ FAQ ============ -->
     <section class="section" id="faq">
       <div class="container container--narrow">
-        <header class="section__head">
-          <p class="label">05 / FAQ</p>
-          <h2>Частые вопросы</h2>
-        </header>
+        <div class="section__head">
+          <p class="label reveal">05 — Вопросы</p>
+          <h2 class="h2 reveal">Частые вопросы</h2>
+        </div>
         <div class="faq">
-          <details class="tile pop">
-            <summary>Почему цена «от»?</summary>
-            <p>Итоговая стоимость зависит от объёма и сложности. После брифа мы называем точную цену, и она не меняется, если не меняется задача.</p>
-          </details>
-          <details class="tile pop">
-            <summary>Смогу ли я сам менять контент?</summary>
-            <p>Да. В тарифах «Сайт компании» и «Интернет-магазин» есть удобная панель управления. Покажем, как ей пользоваться, и оставим инструкцию.</p>
-          </details>
-          <details class="tile pop">
-            <summary>Работаете по договору?</summary>
-            <p>Да, официально: договор, счёт (Rechnung) и все документы.</p>
-          </details>
-          <details class="tile pop">
-            <summary>А если результат не понравится?</summary>
-            <p>Мы согласовываем каждый этап, поэтому сюрпризов в конце не бывает. Если дизайн не попал в ожидания, сделаем новую концепцию.</p>
-          </details>
-          <details class="tile pop">
-            <summary>Кому принадлежит сайт?</summary>
-            <p>Вам. Домен, хостинг и исходный код оформляются на вас, все доступы передаём после запуска.</p>
-          </details>
+          <details class="reveal"><summary>Почему цена «от»?</summary><p>Итоговая стоимость зависит от объёма и сложности. После брифа мы называем точную цену, и она не меняется, если не меняется задача.</p></details>
+          <details class="reveal"><summary>Смогу ли я сам менять контент?</summary><p>Да. В тарифах «Сайт компании» и «Магазин» есть удобная админка. Покажем, как ей пользоваться, и оставим инструкцию.</p></details>
+          <details class="reveal"><summary>Работаете по договору?</summary><p>Да, официально: договор, счёт (Rechnung) и все документы.</p></details>
+          <details class="reveal"><summary>А если результат не понравится?</summary><p>Мы согласовываем каждый этап, поэтому сюрпризов в конце не бывает. Если дизайн не попал в ожидания, сделаем новую концепцию.</p></details>
+          <details class="reveal"><summary>Кому принадлежит сайт?</summary><p>Вам. Домен, хостинг и исходный код оформляются на вас, все доступы передаём после запуска.</p></details>
         </div>
       </div>
     </section>
 
-    <!-- CONTACT -->
-    <section class="section" id="contact">
-      <div class="container tiles contact">
-        <div class="tile contact__info pop">
-          <p class="label">06 / Контакт</p>
-          <h2>Расскажите о&nbsp;проекте</h2>
-          <p class="muted">Первая консультация бесплатная. Ответим в течение рабочего дня.</p>
-          <ul class="contact__links">
-            <li><span class="label">Telegram</span><a href="https://t.me/your_username" target="_blank" rel="noopener noreferrer">@your_username</a></li>
-            <li><span class="label">E-mail</span><a href="mailto:hello@example.com">hello@example.com</a></li>
-          </ul>
+    <!-- ============ CONTACT ============ -->
+    <section class="section contact" id="contact">
+      <div class="container">
+        <p class="label reveal">06 — Контакт</p>
+        <h2 class="contact__title reveal">Давайте сделаем<br><span class="grad">что-то красивое</span></h2>
+        <div class="contact__grid">
+          <div class="contact__info reveal">
+            <p class="muted">Первая консультация бесплатная. Ответим в течение рабочего дня.</p>
+            <ul class="contact__links">
+              <li><span class="label">Telegram</span><a href="https://t.me/your_username" target="_blank" rel="noopener noreferrer">@your_username</a></li>
+              <li><span class="label">E-mail</span><a href="mailto:hello@example.com">hello@example.com</a></li>
+            </ul>
+          </div>
+          <form class="form reveal" id="contact-form" novalidate>
+            <!-- Ловушка для спам-ботов: поле скрыто от людей, боты его заполняют -->
+            <div class="form__hp" aria-hidden="true">
+              <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+            </div>
+            <div class="form__row">
+              <label class="field"><input type="text" name="name" required maxlength="100" autocomplete="name" placeholder=" "><span>Имя</span></label>
+              <label class="field"><input type="text" name="contact" required maxlength="200" placeholder=" "><span>Telegram или e-mail</span></label>
+            </div>
+            <label class="field field--select">
+              <select name="plan" id="plan-select">
+                <option>Пока не знаю</option>
+                <option>Лендинг</option>
+                <option>Сайт компании</option>
+                <option>Интернет-магазин</option>
+                <option>Другое</option>
+              </select>
+              <span>Тариф</span>
+            </label>
+            <label class="field"><textarea name="message" id="message" rows="3" maxlength="3000" placeholder=" "></textarea><span>О проекте</span></label>
+            <label class="consent">
+              <input type="checkbox" name="consent" required>
+              <span>Я согласен(-на) на обработку моих данных для ответа на заявку согласно <a href="datenschutz.html">Datenschutzerklärung</a>.</span>
+            </label>
+            <button type="submit" class="btn btn--block magnetic">Отправить заявку</button>
+            <p class="form__status" role="status" aria-live="polite"></p>
+          </form>
         </div>
-        <form class="tile form pop" id="contact-form" novalidate>
-          <!-- Ловушка для спам-ботов: поле скрыто от людей, боты его заполняют -->
-          <div class="form__hp" aria-hidden="true">
-            <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
-          </div>
-          <div class="form__row">
-            <label>
-              <span class="label">Имя</span>
-              <input type="text" name="name" required maxlength="100" autocomplete="name">
-            </label>
-            <label>
-              <span class="label">Telegram или e-mail</span>
-              <input type="text" name="contact" required maxlength="200">
-            </label>
-          </div>
-          <label>
-            <span class="label">Тариф</span>
-            <select name="plan" id="plan-select">
-              <option>Пока не знаю</option>
-              <option>Лендинг</option>
-              <option>Сайт компании</option>
-              <option>Интернет-магазин</option>
-              <option>Другое</option>
-            </select>
-          </label>
-          <label>
-            <span class="label">О проекте</span>
-            <textarea name="message" id="message" rows="4" maxlength="3000" placeholder="Коротко: что за проект и какие сроки"></textarea>
-          </label>
-          <label class="form__consent">
-            <input type="checkbox" name="consent" required>
-            <span>Я согласен(-на) на обработку моих данных для ответа на заявку согласно <a href="datenschutz.html">Datenschutzerklärung</a>.</span>
-          </label>
-          <button type="submit" class="btn btn--block">Отправить заявку</button>
-          <p class="form__status" role="status" aria-live="polite"></p>
-        </form>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <div class="container footer__inner">
-      <span class="mono">© <span id="year"></span> studio</span>
-      <div class="footer__links">
-        <a href="impressum.html">Impressum</a>
-        <a href="datenschutz.html">Datenschutz</a>
-        <button type="button" class="footer__link" data-cc="show-preferencesModal" hidden>Cookie-Einstellungen</button>
-        <a href="#top">Наверх ↑</a>
+    <div class="container">
+      <div class="footer__row">
+        <span>© <span id="year"></span> studio</span>
+        <div class="footer__links">
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
+          <button type="button" class="footer__link" data-cc="show-preferencesModal" hidden>Cookie-Einstellungen</button>
+          <a href="#top">Наверх ↑</a>
+        </div>
       </div>
+      <p class="footer__mark" aria-hidden="true">studio</p>
     </div>
   </footer>
 
+  <div class="grain" aria-hidden="true"></div>
+
   <script src="script.js"></script>
+  <script src="hero.js"></script>
   <script src="consent.js"></script>
 </body>
 </html>

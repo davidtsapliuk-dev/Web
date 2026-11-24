@@ -1,10 +1,14 @@
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+
+/* ---------- Шапка: прячется при прокрутке вниз ---------- */
+const hdr = document.querySelector('.hdr');
+let lastY = window.scrollY;
 
 /* ---------- Мобильное меню ---------- */
 const toggle = document.querySelector('.nav-toggle');
 const nav = document.getElementById('nav');
-
 function setMenu(open) {
   nav.classList.toggle('is-open', open);
   toggle.setAttribute('aria-expanded', String(open));
@@ -14,114 +18,228 @@ toggle.addEventListener('click', () => setMenu(!nav.classList.contains('is-open'
 nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
 
-/* ---------- Активный блок: рамка-градиент и подсветка за курсором ---------- */
-const tiles = document.querySelectorAll('.tile');
-
-if (canHover) {
-  tiles.forEach((tile) => {
-    tile.addEventListener('pointerenter', () => tile.classList.add('is-active'));
-    tile.addEventListener('pointerleave', () => tile.classList.remove('is-active'));
-    tile.addEventListener('pointermove', (e) => {
-      const r = tile.getBoundingClientRect();
-      tile.style.setProperty('--mx', `${e.clientX - r.left}px`);
-      tile.style.setProperty('--my', `${e.clientY - r.top}px`);
-    });
-  });
-}
-// Фокус с клавиатуры тоже делает блок активным
-document.addEventListener('focusin', (e) => {
-  const tile = e.target.closest('.tile');
-  tiles.forEach((t) => t.classList.toggle('is-active', t === tile));
-});
-
-/* ---------- Появление блоков с лёгкой пружиной ---------- */
-const pops = document.querySelectorAll('.pop');
-
+/* ---------- Появление ---------- */
+const reveals = document.querySelectorAll('.reveal');
 if (reduceMotion || !('IntersectionObserver' in window)) {
-  pops.forEach((el) => el.classList.add('in'));
-  document.documentElement.classList.add('no-anim');
+  reveals.forEach((el) => el.classList.add('in'));
 } else {
   const io = new IntersectionObserver((entries) => {
-    // Блоки, появившиеся одновременно, раскрываются по очереди
-    // Блоки, которые уже выше экрана (переход по якорю), показываем сразу
     entries.filter((e) => !e.isIntersecting && e.boundingClientRect.bottom < 0).forEach((e) => {
-      e.target.classList.add('in');
-      io.unobserve(e.target);
+      e.target.classList.add('in'); io.unobserve(e.target);
     });
-    const visible = entries.filter((e) => e.isIntersecting).sort((a, b) =>
-      a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left);
-    visible.forEach((entry, i) => {
-      entry.target.style.setProperty('--d', `${Math.min(i * 0.07, 0.5)}s`);
-      entry.target.classList.add('in');
-      io.unobserve(entry.target);
+    entries.filter((e) => e.isIntersecting)
+      .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left)
+      .forEach((e, i) => {
+        e.target.style.setProperty('--d', `${Math.min(i * 0.09, 0.6)}s`);
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      });
+  }, { threshold: 0.15, rootMargin: '0px 0px -5% 0px' });
+  reveals.forEach((el) => io.observe(el));
+}
+
+/* ---------- Манифест: слова загораются по мере прокрутки ---------- */
+const scrubEl = document.querySelector('[data-scrub]');
+let scrubWords = [];
+if (scrubEl) {
+  const words = scrubEl.textContent.trim().split(/\s+/);
+  scrubEl.textContent = '';
+  words.forEach((w, i) => {
+    const span = document.createElement('span');
+    span.className = 'w';
+    span.textContent = w;
+    scrubEl.appendChild(span);
+    if (i < words.length - 1) scrubEl.appendChild(document.createTextNode(' '));
+  });
+  scrubWords = [...scrubEl.querySelectorAll('.w')];
+}
+function updateScrub() {
+  if (!scrubEl || reduceMotion) return;
+  const r = scrubEl.getBoundingClientRect();
+  const vh = window.innerHeight;
+  const p = clamp((vh * 0.85 - r.top) / (r.height + vh * 0.3), 0, 1);
+  const lit = Math.round(p * scrubWords.length);
+  scrubWords.forEach((w, i) => w.classList.toggle('on', i < lit));
+}
+
+/* ---------- Процесс: горизонтальная прокрутка ---------- */
+const hs = document.querySelector('.hscroll');
+const hsTrack = hs && hs.querySelector('.hscroll__track');
+const hsBar = hs && hs.querySelector('.hscroll__bar');
+let hsDistance = 0;
+function setupHScroll() {
+  if (!hs) return;
+  const on = !reduceMotion && window.innerWidth > 1000;
+  hs.classList.toggle('hscroll--on', on);
+  if (!on) {
+    hs.style.height = '';
+    hsTrack.style.transform = '';
+    hsDistance = 0;
+    return;
+  }
+  hsDistance = Math.max(0, hsTrack.scrollWidth - window.innerWidth);
+  hs.style.height = `${hsDistance + window.innerHeight}px`;
+  updateHScroll();
+}
+function updateHScroll() {
+  if (!hsDistance) return;
+  const top = hs.getBoundingClientRect().top;
+  const p = clamp(-top / hsDistance, 0, 1);
+  hsTrack.style.transform = `translate3d(${-p * hsDistance}px, 0, 0)`;
+  hsBar.style.setProperty('--p', p.toFixed(4));
+}
+
+/* ---------- Подсветка текущего раздела ---------- */
+const navLinks = [...nav.querySelectorAll('a[href^="#"]:not(.btn)')];
+const navTargets = navLinks.map((a) => document.querySelector(a.getAttribute('href')));
+function updateNav() {
+  const mid = window.innerHeight * 0.45;
+  let current = null;
+  navTargets.forEach((s, i) => {
+    if (!s) return;
+    const r = s.getBoundingClientRect();
+    if (r.top <= mid && r.bottom > mid) current = navLinks[i];
+  });
+  navLinks.forEach((a) => a.classList.toggle('is-current', a === current));
+}
+
+/* ---------- Общий обработчик прокрутки ---------- */
+let ticking = false;
+function onScroll() {
+  const y = window.scrollY;
+  hdr.classList.toggle('is-scrolled', y > 20);
+  if (!nav.classList.contains('is-open')) hdr.classList.toggle('is-hidden', y > lastY && y > 400);
+  lastY = y;
+  updateScrub();
+  updateHScroll();
+  updateNav();
+  ticking = false;
+}
+window.addEventListener('scroll', () => {
+  if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+}, { passive: true });
+let lastWidth = window.innerWidth;
+window.addEventListener('resize', () => {
+  if (window.innerWidth === lastWidth) return;
+  lastWidth = window.innerWidth;
+  setupHScroll();
+});
+window.addEventListener('load', setupHScroll);
+setupHScroll();
+onScroll();
+
+/* ---------- Эффекты для мыши ---------- */
+if (finePointer && !reduceMotion) {
+  // Свечение за курсором в услугах
+  const svc = document.querySelector('[data-orb]');
+  const orb = document.querySelector('.orb');
+  if (svc && orb) {
+    const section = svc.closest('.section');
+    let ox = 0, oy = 0, tx = 0, ty = 0, raf = 0;
+    const loop = () => {
+      ox += (tx - ox) * 0.12; oy += (ty - oy) * 0.12;
+      orb.style.transform = `translate3d(${ox}px, ${oy}px, 0)`;
+      raf = Math.abs(tx - ox) + Math.abs(ty - oy) > 0.5 ? requestAnimationFrame(loop) : 0;
+    };
+    svc.addEventListener('pointerenter', () => orb.classList.add('is-on'));
+    svc.addEventListener('pointerleave', () => orb.classList.remove('is-on'));
+    svc.addEventListener('pointermove', (e) => {
+      const r = section.getBoundingClientRect();
+      tx = e.clientX - r.left; ty = e.clientY - r.top;
+      if (!raf) raf = requestAnimationFrame(loop);
     });
-  }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-  pops.forEach((el) => io.observe(el));
+  }
+
+  // 3D-наклон карточек тарифов с бликом
+  document.querySelectorAll('.tilt').forEach((card) => {
+    card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      card.style.transition = 'transform .15s ease-out, border-color .4s';
+      card.style.transform = `rotateX(${(0.5 - y) * 10}deg) rotateY(${(x - 0.5) * 12}deg) translateZ(0)`;
+      card.style.setProperty('--gx', `${x * 100}%`);
+      card.style.setProperty('--gy', `${y * 100}%`);
+    });
+    card.addEventListener('pointerleave', () => {
+      card.style.transition = '';
+      card.style.transform = '';
+    });
+  });
+
+  // «Магнитные» кнопки
+  document.querySelectorAll('.magnetic').forEach((el) => {
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      const x = e.clientX - (r.left + r.width / 2);
+      const y = e.clientY - (r.top + r.height / 2);
+      el.style.transform = `translate(${x * 0.25}px, ${y * 0.35}px)`;
+    });
+    el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+  });
+
+  // Кольцо-курсор
+  const cursor = document.createElement('div');
+  cursor.className = 'cursor is-hidden';
+  cursor.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(cursor);
+  let cx = -100, cy = -100, mx = -100, my = -100;
+  const follow = () => {
+    cx += (mx - cx) * 0.2; cy += (my - cy) * 0.2;
+    cursor.style.transform = `translate3d(${cx}px, ${cy}px, 0)`;
+    requestAnimationFrame(follow);
+  };
+  requestAnimationFrame(follow);
+  window.addEventListener('pointermove', (e) => {
+    mx = e.clientX; my = e.clientY;
+    cursor.classList.remove('is-hidden');
+    cursor.classList.toggle('is-link', !!e.target.closest('a, button, label, summary, select'));
+  }, { passive: true });
+  document.documentElement.addEventListener('pointerleave', () => cursor.classList.add('is-hidden'));
 }
 
 /* ---------- Счётчики ---------- */
 function countUp(el) {
   const target = parseFloat(el.dataset.count);
-  const decimals = parseInt(el.dataset.decimals || '0', 10);
-  if (reduceMotion) { el.textContent = target.toFixed(decimals); return; }
+  if (reduceMotion) { el.textContent = String(target); return; }
   const start = performance.now();
-  const dur = 1400;
   const step = (now) => {
-    const t = Math.min((now - start) / dur, 1);
-    const eased = 1 - Math.pow(1 - t, 4);
-    el.textContent = (target * eased).toFixed(decimals);
+    const t = Math.min((now - start) / 1800, 1);
+    el.textContent = String(Math.round(target * (1 - Math.pow(1 - t, 4))));
     if (t < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
 }
 if ('IntersectionObserver' in window) {
-  const countIo = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      if (e.isIntersecting) { countUp(e.target); countIo.unobserve(e.target); }
-    });
-  }, { threshold: 0.6 });
-  document.querySelectorAll('[data-count]').forEach((el) => countIo.observe(el));
-}
-
-/* ---------- Подсветка текущего раздела в меню ---------- */
-const navLinks = [...nav.querySelectorAll('a[href^="#"]:not(.btn)')];
-const sections = navLinks.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
-if ('IntersectionObserver' in window) {
-  const secIo = new IntersectionObserver((entries) => {
-    entries.forEach((e) => {
-      if (!e.isIntersecting) return;
-      navLinks.forEach((a) => a.classList.toggle('is-current', a.getAttribute('href') === `#${e.target.id}`));
-    });
-  }, { rootMargin: '-45% 0px -50% 0px' });
-  sections.forEach((s) => secIo.observe(s));
+  const cio = new IntersectionObserver((entries) => entries.forEach((e) => {
+    if (e.isIntersecting) { countUp(e.target); cio.unobserve(e.target); }
+  }), { threshold: 0.6 });
+  document.querySelectorAll('[data-count]').forEach((el) => cio.observe(el));
 }
 
 /* ---------- Уведомление ---------- */
-let toastEl;
-let toastTimer;
-function notify(title, text) {
+let toastEl, toastTimer;
+function notify(text) {
   if (!toastEl) {
     toastEl = document.createElement('div');
     toastEl.className = 'toast';
     toastEl.setAttribute('role', 'status');
-    toastEl.innerHTML = '<span class="toast__icon" aria-hidden="true"></span><div><p class="toast__title"></p><p class="toast__text"></p></div>';
+    toastEl.innerHTML = '<span class="toast__dot" aria-hidden="true"></span><span class="toast__text"></span>';
     document.body.appendChild(toastEl);
   }
-  toastEl.querySelector('.toast__title').textContent = title;
   toastEl.querySelector('.toast__text').textContent = text;
   requestAnimationFrame(() => toastEl.classList.add('is-shown'));
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove('is-shown'), 4200);
+  toastTimer = setTimeout(() => toastEl.classList.remove('is-shown'), 3600);
 }
 
-/* ---------- Выбор тарифа → форма ---------- */
+/* ---------- Тариф → форма ---------- */
 const planSelect = document.getElementById('plan-select');
 const messageEl = document.getElementById('message');
-
 document.querySelectorAll('[data-plan]').forEach((btn) => {
   btn.addEventListener('click', () => {
     planSelect.value = btn.dataset.plan;
-    notify('Тариф выбран', `«${btn.dataset.plan}» уже подставлен в форму заявки.`);
+    notify(`«${btn.dataset.plan}» выбран — он уже в форме заявки`);
   });
 });
 
@@ -130,7 +248,6 @@ const calc = document.getElementById('calc');
 const sumEl = document.getElementById('calc-sum');
 const monthlyEl = document.getElementById('calc-monthly');
 const fmt = (n) => n.toLocaleString('ru-RU').replace(/ /g, ' ');
-
 function calcState() {
   const base = calc.querySelector('input[name="base"]:checked');
   let once = parseInt(base.value, 10);
@@ -143,24 +260,21 @@ function calcState() {
   });
   return { name: base.dataset.name, once, monthly, extras };
 }
-
 let shown = 45000;
-function renderCalc() {
+calc.addEventListener('change', () => {
   const { once, monthly } = calcState();
-  monthlyEl.textContent = monthly ? `+ ${fmt(monthly)} ₽ / мес` : '';
+  monthlyEl.textContent = monthly ? `+ ${fmt(monthly)} ₽ в месяц` : '';
   if (reduceMotion) { sumEl.textContent = `от ${fmt(once)} ₽`; shown = once; return; }
   const from = shown;
   const start = performance.now();
   const step = (now) => {
-    const t = Math.min((now - start) / 450, 1);
+    const t = Math.min((now - start) / 500, 1);
     shown = Math.round(from + (once - from) * (1 - Math.pow(1 - t, 3)));
     sumEl.textContent = `от ${fmt(shown)} ₽`;
     if (t < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
-}
-calc.addEventListener('change', renderCalc);
-
+});
 document.getElementById('calc-cta').addEventListener('click', () => {
   const { name, once, monthly, extras } = calcState();
   planSelect.value = name;
@@ -170,7 +284,7 @@ document.getElementById('calc-cta').addEventListener('click', () => {
     parts.push(`ориентировочно от ${fmt(once)} ₽${monthly ? ` + ${fmt(monthly)} ₽/мес` : ''}`);
     messageEl.value = `${parts.join('; ')}.`;
   }
-  notify('Проект собран', 'Параметры из калькулятора подставлены в форму.');
+  notify('Параметры проекта подставлены в форму');
 });
 
 /* ---------- Форма заявки ----------
@@ -215,7 +329,6 @@ form.addEventListener('submit', async (e) => {
     field.setAttribute('aria-invalid', String(empty));
     if (empty) valid = false;
   });
-
   if (!valid) {
     statusEl.textContent = 'Заполните имя, контакт и подтвердите согласие на обработку данных.';
     return;
@@ -227,23 +340,21 @@ form.addEventListener('submit', async (e) => {
   const button = form.querySelector('button[type="submit"]');
   button.disabled = true;
   statusEl.textContent = 'Отправляем…';
-
   try {
     const res = await sendForm(data);
     if (!res.ok) throw new Error();
     form.reset();
     statusEl.textContent = SUCCESS;
-    notify('Заявка отправлена', 'Ответим в течение рабочего дня.');
+    notify('Заявка отправлена — скоро ответим');
   } catch {
     statusEl.textContent = 'Не получилось отправить. Напишите нам в Telegram.';
   } finally {
     button.disabled = false;
   }
 });
-
 form.addEventListener('input', (e) => {
   if (e.target.getAttribute('aria-invalid') === 'true') e.target.removeAttribute('aria-invalid');
 });
 
-/* ---------- Год в подвале ---------- */
+/* ---------- Год ---------- */
 document.getElementById('year').textContent = new Date().getFullYear();
