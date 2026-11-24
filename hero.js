@@ -1,16 +1,12 @@
 /*
  * Hero: глитч-слово в стиле киберпанка.
  * Слово рисуется на canvas: цветное расслоение (бирюзовый/розовый), рваные горизонтальные
- * полосы, развёртка. Сбои случаются сами по себе, усиливаются под курсором,
- * по клику — сильный сбой и смена слова с «перешифровкой» символов.
- * При «Уменьшении движения» — без мерцания: слово стоит, слова сменяются плавным затуханием.
+ * полосы, развёртка. Сбои случаются сами по себе и усиливаются под курсором.
+ * При «Уменьшении движения» — без мерцания: слово просто стоит.
  */
 (() => {
-  const WORDS = ['сайты', 'лендинги', 'бренды'];
-  const CYCLE_MS = 6000;         // как долго держится каждое слово
-  const SCRAMBLE_MS = 750;       // длительность «перешифровки»
+  const WORDS = ['Сайты'];
   const TICK_MS = 70;            // как часто меняется рисунок сбоя (рвано, не плавно)
-  const GLYPHS = '#%&@$*+=<>/\\|_01█▓▒░';
   const CYAN = '#00f0ff';
   const MAGENTA = '#ff2a6d';
 
@@ -22,18 +18,9 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const ctx = canvas.getContext && canvas.getContext('2d');
 
-  /* ---------- Запасной вариант без canvas: текст со сменой слов ---------- */
+  /* ---------- Запасной вариант без canvas: обычный градиентный текст ---------- */
   if (!ctx) {
     document.documentElement.classList.add('no-particles');
-    let i = 0;
-    setInterval(() => {
-      wordEl.classList.add('is-swapping');
-      setTimeout(() => {
-        i = (i + 1) % WORDS.length;
-        wordEl.textContent = WORDS[i];
-        wordEl.classList.remove('is-swapping');
-      }, 450);
-    }, CYCLE_MS);
     return;
   }
 
@@ -43,19 +30,13 @@
   let H = 0;
   const box = { x: 0, y: 0, w: 0, h: 0, pad: 0 };  // где стоит слово внутри hero
   let fontSize = 100;
-  let wordIndex = 0;
-  let text = WORDS[0];          // что нарисовано сейчас
-  let target = WORDS[0];        // к какому слову идём
-  let scrambleStart = -1;
+  const text = WORDS[0];
   let energy = 0.6;             // сила сбоя 0..1 (затухает)
   let nextSpike = 0;
   let lastTick = 0;
-  let alpha = 1;                // для плавной смены слов без движения
-  let fadeTo = 1;
+  const alpha = 1;
   let running = false;
   let visible = true;
-  let lastInteract = 0;
-  let cycleTimer = 0;
   let dirty = true;
   const pointer = { x: -9999, y: -9999, over: false, speed: 0 };
   // Параметры текущего кадра сбоя
@@ -129,47 +110,14 @@
       l.c.width = Math.round((box.w + box.pad * 2) * dpr);
       l.c.height = Math.round(box.h * dpr);
     });
-    fit(target);
+    fit(text);
     renderLayers(text);
-  }
-
-  /* ---------- Смена слова ---------- */
-  function nextWord() {
-    wordIndex = (wordIndex + 1) % WORDS.length;
-    target = WORDS[wordIndex];
-    if (reduceMotion) {
-      fadeTo = 0; // погасим, поменяем, проявим
-    } else {
-      fit(target);
-      scrambleStart = performance.now();
-      energy = 1;
-    }
-  }
-
-  function scheduleCycle() {
-    clearInterval(cycleTimer);
-    cycleTimer = setInterval(() => {
-      if (!visible || document.hidden) return;
-      if (performance.now() - lastInteract < 2500) return;
-      nextWord();
-    }, CYCLE_MS);
   }
 
   const rand = (a, b) => a + Math.random() * (b - a);
 
   /* ---------- Новый рисунок сбоя ---------- */
-  function tick(now) {
-    // Перешифровка: буквы проявляются слева направо, остальное — случайные символы
-    if (scrambleStart >= 0) {
-      const p = Math.min((now - scrambleStart) / SCRAMBLE_MS, 1);
-      const shown = Math.floor(p * target.length);
-      let s = target.slice(0, shown);
-      for (let i = shown; i < target.length; i++) s += GLYPHS[(Math.random() * GLYPHS.length) | 0];
-      if (p >= 1) { s = target; scrambleStart = -1; }
-      text = s;
-      renderLayers(text);
-    }
-
+  function tick() {
     const lvl = reduceMotion ? 0 : energy;
     split = reduceMotion ? 2 : 2 + lvl * rand(6, 16);
     jitterY = lvl > 0.3 ? rand(-1, 1) * lvl * 4 : 0;
@@ -233,17 +181,9 @@
     energy *= 0.92;
     if (energy < 0.01) energy = 0;
 
-    // Плавная смена слов в режиме без движения
-    if (alpha !== fadeTo) {
-      alpha += Math.sign(fadeTo - alpha) * 0.05;
-      if (Math.abs(alpha - fadeTo) < 0.05) alpha = fadeTo;
-      if (alpha === 0) { text = target; fit(target); renderLayers(text); fadeTo = 1; }
-      dirty = true;
-    }
-
-    if (now - lastTick > TICK_MS && (energy > 0 || scrambleStart >= 0 || slices.length)) {
+    if (now - lastTick > TICK_MS && (energy > 0 || slices.length)) {
       lastTick = now;
-      tick(now);
+      tick();
     }
 
     if (dirty) {
@@ -293,15 +233,8 @@
     pointer.speed = Math.max(pointer.speed, Math.hypot(x - lastPX, y - lastPY));
     lastPX = x; lastPY = y;
     pointer.over = x > box.x - 40 && x < box.x + box.w && y > box.y - 40 && y < box.y + box.h + 40;
-    lastInteract = performance.now();
   }, { passive: true });
   hero.addEventListener('pointerleave', () => { pointer.over = false; });
-  hero.addEventListener('pointerdown', (e) => {
-    if (e.target.closest('a, button')) return;
-    lastInteract = performance.now();
-    if (!reduceMotion) energy = 1;
-    nextWord();
-  });
 
   /* ---------- Видимость и размеры ---------- */
   new IntersectionObserver(([entry]) => {
@@ -329,6 +262,5 @@
   ready.catch(() => {}).then(() => {
     setup();
     start();
-    scheduleCycle();
   });
 })();

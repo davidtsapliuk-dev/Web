@@ -157,6 +157,7 @@ a { color: inherit; }
 
 .hero__title { display: flex; flex-direction: column; }
 .hero__pre { font-family: var(--display); font-size: clamp(1.4rem, 3.2vw, 2.6rem); font-weight: 500; letter-spacing: -0.02em; color: var(--muted); }
+.hero__by { margin: 0 0 1.6rem; font-family: var(--display); font-size: clamp(1.2rem, 2.8vw, 2.3rem); font-weight: 500; letter-spacing: -0.02em; color: var(--muted); }
 .hero__word {
   display: block;
   font-family: var(--display); font-weight: 800;
