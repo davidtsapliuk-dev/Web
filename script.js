@@ -18,36 +18,6 @@ toggle.addEventListener('click', () => setMenu(!nav.classList.contains('is-open'
 nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
 
-/* ---------- Свободные места: месяцы подставляются автоматически ---------- */
-(() => {
-  const k = document.querySelector('[data-slots]');
-  if (!k) return;
-  const n = Math.max(0, parseInt(k.dataset.slots, 10) || 0);
-  const IN = ['январе', 'феврале', 'марте', 'апреле', 'мае', 'июне', 'июле', 'августе', 'сентябре', 'октябре', 'ноябре', 'декабре'];
-  const ON = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
-  const m = new Date().getMonth();
-  const word = (x) => {
-    const a = x % 10, b = x % 100;
-    if (a === 1 && b !== 11) return 'проект';
-    if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return 'проекта';
-    return 'проектов';
-  };
-  const num = k.querySelector('.kicker__num');
-  const l1 = k.querySelector('.kicker__l1');
-  const l2 = k.querySelector('.kicker__l2');
-  const next = k.querySelector('.kicker__next');
-  num.textContent = String(n);
-  if (n > 0) {
-    l1.textContent = `${word(n)} ${n % 10 === 1 && n % 100 !== 11 ? 'свободен' : 'свободно'}`;
-    l2.textContent = `в ${IN[m]}`;
-  } else {
-    l1.textContent = 'мест нет';
-    l2.textContent = `в ${IN[m]}`;
-    k.classList.add('kicker--full');
-  }
-  next.textContent = `Можно забронировать на ${ON[(m + 1) % 12]} →`;
-})();
-
 /* ---------- Появление ---------- */
 const reveals = document.querySelectorAll('.reveal');
 if (!('IntersectionObserver' in window)) {
