@@ -242,49 +242,6 @@ document.querySelectorAll('[data-plan]').forEach((btn) => {
   });
 });
 
-/* ---------- Калькулятор ---------- */
-const calc = document.getElementById('calc');
-const sumEl = document.getElementById('calc-sum');
-const monthlyEl = document.getElementById('calc-monthly');
-// Разделитель тысяч — обычный пробел: «4 900 €»
-const fmt = (n) => n.toLocaleString('ru-RU').replace(/\s/g, ' ');
-function calcState() {
-  const base = calc.querySelector('input[name="base"]:checked');
-  let once = parseInt(base.value, 10);
-  const monthly = parseInt(base.dataset.monthly || '0', 10); // хостинг и поддержка
-  const extras = [];
-  calc.querySelectorAll('input[type="checkbox"]:checked').forEach((c) => {
-    once += parseInt(c.value, 10);
-    extras.push(c.dataset.name);
-  });
-  return { name: base.dataset.name, once, monthly, extras };
-}
-let shown = 199;
-calc.addEventListener('change', () => {
-  const { once, monthly } = calcState();
-  monthlyEl.textContent = monthly ? `+ ${fmt(monthly)} € в месяц (хостинг, SSL, обновления, поддержка и мелкие правки)` : '';
-  const from = shown;
-  const start = performance.now();
-  const step = (now) => {
-    const t = Math.min((now - start) / 500, 1);
-    shown = Math.round(from + (once - from) * (1 - Math.pow(1 - t, 3)));
-    sumEl.textContent = `от ${fmt(shown)} €`;
-    if (t < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
-});
-document.getElementById('calc-cta').addEventListener('click', () => {
-  const { name, once, monthly, extras } = calcState();
-  planSelect.value = name;
-  if (!messageEl.value.trim()) {
-    const parts = [`Интересует: ${name}`];
-    if (extras.length) parts.push(`дополнительно: ${extras.join(', ')}`);
-    parts.push(`ориентировочно от ${fmt(once)} €${monthly ? ` + ${fmt(monthly)} €/мес` : ''}`);
-    messageEl.value = `${parts.join('; ')}.`;
-  }
-  notify('Параметры проекта подставлены в форму');
-});
-
 /* ---------- Форма заявки ----------
    Сейчас данные никуда не отправляются: подключите Formspree, Telegram-бота или свой бэкенд
    в функции sendForm (и добавьте адрес сервиса в Content-Security-Policy: connect-src).
