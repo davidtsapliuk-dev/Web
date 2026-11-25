@@ -1,3 +1,20 @@
+// Тексты интерфейса на языке страницы (<html lang>)
+const DE = document.documentElement.lang === 'de';
+const TXT = DE ? {
+  menuOpen: 'Menü öffnen', menuClose: 'Menü schließen', rail: 'Abschnitte der Seite',
+  picked: (p) => `„${p}“ ausgewählt — schon im Anfrageformular eingetragen`,
+  success: 'Danke! Ich melde mich innerhalb eines Werktags bei Ihnen.',
+  invalid: 'Bitte Name und Kontakt angeben und der Datenverarbeitung zustimmen.',
+  sending: 'Wird gesendet…', sent: 'Anfrage gesendet — ich melde mich bald',
+  failed: 'Senden hat nicht geklappt. Schreiben Sie mir per WhatsApp oder E-Mail.',
+} : {
+  menuOpen: 'Открыть меню', menuClose: 'Закрыть меню', rail: 'Разделы страницы',
+  picked: (p) => `«${p}» выбран — он уже в форме заявки`,
+  success: 'Спасибо! Я свяжусь с вами в течение рабочего дня.',
+  invalid: 'Заполните имя, контакт и подтвердите согласие на обработку данных.',
+  sending: 'Отправляем…', sent: 'Заявка отправлена — скоро отвечу',
+  failed: 'Не получилось отправить. Напишите мне в WhatsApp или на почту.',
+};
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
@@ -12,7 +29,7 @@ const nav = document.getElementById('nav');
 function setMenu(open) {
   nav.classList.toggle('is-open', open);
   toggle.setAttribute('aria-expanded', String(open));
-  toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+  toggle.setAttribute('aria-label', open ? TXT.menuClose : TXT.menuOpen);
 }
 toggle.addEventListener('click', () => setMenu(!nav.classList.contains('is-open')));
 nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
@@ -122,7 +139,7 @@ const railSections = [...document.querySelectorAll('main section[id]:not(#top)')
   .filter(Boolean);
 const rail = document.createElement('nav');
 rail.className = 'rail';
-rail.setAttribute('aria-label', 'Разделы страницы');
+rail.setAttribute('aria-label', TXT.rail);
 railSections.forEach((r) => {
   const a = document.createElement('a');
   a.href = `#${r.sec.id}`;
@@ -369,7 +386,7 @@ document.querySelectorAll('[data-plan]').forEach((btn) => {
   btn.addEventListener('click', () => {
     const radio = document.querySelector(`input[name="plan"][value="${btn.dataset.plan}"]`);
     if (radio) radio.checked = true;
-    notify(`«${btn.dataset.plan}» выбран — он уже в форме заявки`);
+    notify(TXT.picked(btn.dataset.plan));
   });
 });
 
@@ -384,7 +401,7 @@ const form = document.getElementById('contact-form');
 const statusEl = form.querySelector('.form__status');
 const formOpenedAt = Date.now();
 const MIN_FILL_TIME_MS = 3000; // человек не заполнит форму быстрее 3 секунд
-const SUCCESS = 'Спасибо! Я свяжусь с вами в течение рабочего дня.';
+const SUCCESS = TXT.success;
 
 async function sendForm(data) {
   // Пример для Formspree:
@@ -416,7 +433,7 @@ form.addEventListener('submit', async (e) => {
     if (empty) valid = false;
   });
   if (!valid) {
-    statusEl.textContent = 'Заполните имя, контакт и подтвердите согласие на обработку данных.';
+    statusEl.textContent = TXT.invalid;
     return;
   }
 
@@ -425,15 +442,15 @@ form.addEventListener('submit', async (e) => {
 
   const button = form.querySelector('button[type="submit"]');
   button.disabled = true;
-  statusEl.textContent = 'Отправляем…';
+  statusEl.textContent = TXT.sending;
   try {
     const res = await sendForm(data);
     if (!res.ok) throw new Error();
     form.reset();
     statusEl.textContent = SUCCESS;
-    notify('Заявка отправлена — скоро отвечу');
+    notify(TXT.sent);
   } catch {
-    statusEl.textContent = 'Не получилось отправить. Напишите мне в WhatsApp или на почту.';
+    statusEl.textContent = TXT.failed;
   } finally {
     button.disabled = false;
   }

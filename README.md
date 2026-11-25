@@ -7,6 +7,7 @@
 Чистый HTML/CSS/JS без сборки:
 
 - `index.html`, `styles.css`, `script.js`, `boot.js` — сайт
+- `de.html` — немецкая версия; собирается из `index.html` командой `python3 tools/make_de.py` (словарь переводов внутри скрипта: новый русский текст — добавьте его перевод туда). Переключатель RU / DE — в шапке
 - `fonts/` — шрифты Manrope и Unbounded (SIL OFL 1.1), хранится локально: никаких запросов к Google Fonts (DSGVO)
 - `consent.js` + `vendor/cookieconsent/` — cookie-баннер на CookieConsent v3 (MIT), **сейчас выключен**
 

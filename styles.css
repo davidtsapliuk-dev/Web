@@ -131,6 +131,13 @@ a { color: inherit; }
 
 .nav { display: flex; align-items: center; gap: 30px; }
 .nav .btn { white-space: nowrap; }
+/* Переключатель языка */
+.lang { display: inline-flex; align-items: center; padding: 3px; border: 1px solid var(--line-2); border-radius: 99px; background: rgba(255,255,255,.03); }
+.lang a, .nav .lang a:not(.btn) { padding: .35em .7em; border-radius: 99px; font-size: .78rem; font-weight: 700; letter-spacing: .06em; color: var(--muted); text-decoration: none; transition: color .3s, background-color .3s; }
+.nav .lang a::after { display: none; }
+.lang a:hover { color: var(--text); }
+.lang a[aria-current="page"], .nav .lang a[aria-current="page"]:not(.btn) { background: var(--text); color: var(--bg); }
+.lang--bar { display: none; margin-left: auto; margin-right: 14px; }
 @media (max-width: 900px) and (min-width: 761px) { .nav { gap: 20px; } .nav a:not(.btn) { font-size: .92rem; } }
 @media (max-width: 860px) and (min-width: 761px) { .nav .btn { display: none; } }
 .nav a:not(.btn) { position: relative; text-decoration: none; font-size: .93rem; font-weight: 500; color: var(--muted); transition: color .3s; }
@@ -682,6 +689,8 @@ a { color: inherit; }
 }
 
 @media (max-width: 760px) {
+  .lang--bar { display: inline-flex; }
+  .nav .lang { display: none; }
   .desk { --dw: min(63vw, 284px); top: 140px; right: 64px; }
   .mock__grid { display: none; }
   body { font-size: 16px; }
@@ -780,3 +789,10 @@ a { color: inherit; }
 }
 /* Ленту «Процесса» на паузу не ставим: её положение задаёт прокрутка */
 .anim-off .hscroll__track, .anim-off .hscroll__bar span { animation-play-state: running !important; }
+
+/* Немецкая версия: «Websites» длиннее «Сайты», шрифт чуть меньше; волна на 8 букв */
+html[lang="de"] .hero__word { font-size: clamp(2.6rem, 8.6vw, 8rem); }
+@media (max-width: 760px) { html[lang="de"] .hero__word { font-size: 12vw; } }
+.hero__word .ch:nth-child(6) { animation-delay: .4s, 3s; }
+.hero__word .ch:nth-child(7) { animation-delay: .48s, 3.12s; }
+.hero__word .ch:nth-child(8) { animation-delay: .56s, 3.24s; }
